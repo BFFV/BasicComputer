@@ -45,5 +45,16 @@ architecture Behavioral of ALU is
 
 begin
 
+signal regb : STD_LOGIC_VECTOR (15 downto 0)
+component fulladder is
+    Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
+           B : in STD_LOGIC_VECTOR (15 downto 0);
+           carryIn: in STD_LOGIC;
+           dataOut : out STD_LOGIC_VECTOR (15 downto 0);
+           C : out STD_LOGIC;
+           Z : out STD_LOGIC;
+           N : out STD_LOGIC);
+end component;
+
 
 end Behavioral;
