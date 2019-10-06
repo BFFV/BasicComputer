@@ -34,7 +34,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 entity fulladder is
     Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
            B : in STD_LOGIC_VECTOR (15 downto 0);
-           carryIn: in STD_LOGIC;
+           carryIn : in STD_LOGIC_VECTOR(15 downto 0);
            dataOut : out STD_LOGIC_VECTOR (15 downto 0);
            C : out STD_LOGIC;
            Z : out STD_LOGIC;
@@ -59,7 +59,7 @@ architecture Behavioral of fulladder is
     signal carry15 : STD_LOGIC;
     signal carry16 : STD_LOGIC;
 
-begin
+begin  
     -- Bit 1
     dataOut(0) <= (B(0) xor carryIn) xor A(0);
     carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0)); 
