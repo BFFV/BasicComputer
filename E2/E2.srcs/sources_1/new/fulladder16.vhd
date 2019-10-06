@@ -98,10 +98,10 @@ begin
     -- Bit 13
     dataOut(12) <= (B(12) xor carry12) xor A(12);
     carry13 <= (B(12) and carry12) or (A(12) and carry12) or (A(12) and B(12));
-    
     -- Bit 14
-    carry14 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
-    dataOut(1) <= (B(1) xor carry1) xor A(1);
+    dataOut(13) <= (B(13) xor carry13) xor A(13);
+    carry14 <= (B(13) and carry13) or (A(13 and carry13) or (A(13) and B(13));
+    
     -- Bit 15
     carry15 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
