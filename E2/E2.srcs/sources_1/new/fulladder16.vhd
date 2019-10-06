@@ -108,9 +108,11 @@ begin
     -- Bit 16
     dataOut(15) <= (B(15) xor carry15) xor A(15);
     carry16 <= (B(15) and carry15) or (A(15) and carry15) or (A(15) and B(15));
+    -- Z
+    Z <= not (dataOut(0) or dataOut(1) or dataOut(2) or dataOut(3) or dataOut(4) or dataOut(5) or dataOut(6) or dataOut(7) or dataOut(8) or dataOut(9) or dataOut(10) or dataOut(11) or dataOut(12) or dataOut(13) or dataOut(14) or dataOut(15));
+    -- N 
+    N <= dataOut(15);
     -- C
-    C <= not (dataOut(0) or dataOut(1) or dataOut(2) or dataOut(3) or dataOut(4) or dataOut(5) or dataOut(6) or dataOut(7) or dataOut(8) or dataOut(9) or dataOut(10) or dataOut(11) or dataOut(12) or dataOut(13) or dataOut(14) or dataOut(15));
-    -- N
-    N <= carry16;
+    C <= carry16;
    
 end Behavioral;
