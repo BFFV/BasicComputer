@@ -80,10 +80,10 @@ begin
     -- Bit 7
     dataOut(6) <= (B(6) xor carry6) xor A(6);
     carry7 <= (B(6) and carry6) or (A(6) and carry6) or (A(6) and B(6));
-    
     -- Bit 8
-    carry8 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
-    dataOut(1) <= (B(1) xor carry1) xor A(1);
+    dataOut(7) <= (B(7) xor carry7) xor A(7);
+    carry8 <= (B(7) and carry7) or (A(7) and carry7) or (A(7) and B(7));
+    
     -- Bit 9
     carry9 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
