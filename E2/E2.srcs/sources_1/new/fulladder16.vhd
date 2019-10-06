@@ -104,8 +104,7 @@ begin
     -- Bit 15
     dataOut(14) <= (B(14) xor carry14) xor A(14);
     carry15 <= (B(14) and carry14) or (A(14) and carry14) or (A(14) and B(14));
-    
     -- Bit 16
-    
-    dataOut(1) <= (B(1) xor carry1) xor A(1);
+    dataOut(15) <= (B(15) xor carry15) xor A(15);
+   
 end Behavioral;
