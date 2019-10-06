@@ -106,5 +106,7 @@ begin
     carry15 <= (B(14) and carry14) or (A(14) and carry14) or (A(14) and B(14));
     -- Bit 16
     dataOut(15) <= (B(15) xor carry15) xor A(15);
+    -- C
+    C <= not (dataOut(0) or dataOut(1) or dataOut(2) or dataOut(3) or dataOut(4) or dataOut(5) or dataOut(6) or dataOut(7) or dataOut(8) or dataOut(9) or dataOut(10) or dataOut(11) or dataOut(12) or dataOut(13) or dataOut(14) or dataOut(15));
    
 end Behavioral;
