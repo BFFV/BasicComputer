@@ -65,45 +65,45 @@ begin
     carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 3
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
-    dataOut(1) <= (B(1) xor carry1) xor A(1);
+    carry2 <= (B(1) and carry1) or (A(1) and carry1) or (A(1) and B(1));
+    dataOut(2) <= (B(1) xor carry1) xor A(1);
     -- Bit 4
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry3 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 5
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry4 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 6
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry5 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 7
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry6 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 8
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry7 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 9
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry8 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 10
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry9 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 11
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry10 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
    -- Bit 12
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry11 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 13
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry12 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 14
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry13 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 15
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry14 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
     -- Bit 16
-    carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
+    carry15 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0));
     dataOut(1) <= (B(1) xor carry1) xor A(1);
 end Behavioral;
