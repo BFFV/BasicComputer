@@ -4,7 +4,7 @@
 -- 
 -- Create Date: 03.10.2019 01:25:29
 -- Design Name: 
--- Module Name: ALU - Behavioral
+-- Module Name: fulladder - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,7 +31,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity ALU is
+entity fulladder is
     Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
            B : in STD_LOGIC_VECTOR (15 downto 0);
            carryIn: in STD_LOGIC;
@@ -39,9 +39,9 @@ entity ALU is
            C : out STD_LOGIC;
            Z : out STD_LOGIC;
            N : out STD_LOGIC);
-end ALU;
+end fulladder;
 
-architecture Behavioral of ALU is
+architecture Behavioral of fulladder is
     signal carry1 : STD_LOGIC;
     signal carry2 : STD_LOGIC;
     signal carry3 : STD_LOGIC;
