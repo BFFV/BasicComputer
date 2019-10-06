@@ -69,8 +69,8 @@ begin
     dataOut(2) <= (B(2) xor carry2) xor A(2);
     carry3 <= (B(2) and carry2) or (A(2) and carry2) or (A(2) and B(2));
     -- Bit 4
+    dataOut(3) <= (B(3) xor carry3) xor A(3);
     carry4 <= (B(3) and carry3) or (A(3) and carry3) or (A(3) and B(3));
-    dataOut(3) <= (B(3) xor carry2) xor A(3);
     -- Bit 5
     carry5 <= (B(4) and carry4) or (A(4) and carry4) or (A(4) and B(4));
     dataOut(4) <= (B(3) xor carry3) xor A(3);    
