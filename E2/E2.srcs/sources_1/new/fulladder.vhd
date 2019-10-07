@@ -33,7 +33,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity fulladder is
     Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
-           B : in STD_LOGIC_VECTOR (15 downto 0);
+           regB : in STD_LOGIC_VECTOR (15 downto 0);
            carryIn : in STD_LOGIC_VECTOR(15 downto 0);
            dataOut : out STD_LOGIC_VECTOR (15 downto 0);
            C : out STD_LOGIC;
@@ -42,6 +42,7 @@ entity fulladder is
 end fulladder;
 
 architecture Behavioral of fulladder is
+    signal B: STD_LOGIC_VECTOR  (15 downto 0);
     signal carry1 : STD_LOGIC;
     signal carry2 : STD_LOGIC;
     signal carry3 : STD_LOGIC;
@@ -59,7 +60,10 @@ architecture Behavioral of fulladder is
     signal carry15 : STD_LOGIC;
     signal carry16 : STD_LOGIC;
 
-begin  
+begin
+    with carryIn select
+       B <= not B when "1",
+            B when others;
     -- Bit 1
     dataOut(0) <= (B(0) xor carryIn) xor A(0);
     carry1 <= (B(0) and carryIn) or (A(0) and carryIn) or (A(0) and B(0)); 
@@ -110,8 +114,10 @@ begin
     carry16 <= (B(15) and carry15) or (A(15) and carry15) or (A(15) and B(15));
     -- Z
     Z <= not (dataOut(0) or dataOut(1) or dataOut(2) or dataOut(3) or dataOut(4) or dataOut(5) or dataOut(6) or dataOut(7) or dataOut(8) or dataOut(9) or dataOut(10) or dataOut(11) or dataOut(12) or dataOut(13) or dataOut(14) or dataOut(15));
-    -- N 
-    N <= dataOut(15);
+    -- N
+    with carryIn select
+         N <= "0" when "0",
+              "1" when others;  -- Arreglar
     -- C
     C <= carry16;
    
