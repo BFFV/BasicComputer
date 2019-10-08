@@ -42,44 +42,75 @@ entity ALU is
 end ALU;
 
 architecture Behavioral of ALU is
-   component fulladder is
     signal carryIn : STD_LOGIC;
     signal cFulladder : STD_LOGIC;
     signal nFulladder : STD_LOGIC;
     signal zFulladder : STD_LOGIC;
-    signal resultFulladder : STD_LOGIC
+    signal resultFulladder: STD_LOGIC_VECTOR(15 downto 0);
+    signal zLU        : STD_LOGIC;
+    signal resultLU: STD_LOGIC_VECTOR(15 downto 0);
+    
+  component fulladder is
     Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
            regB : in STD_LOGIC_VECTOR (15 downto 0);
-           carryIn : in STD_LOGIC_VECTOR(15 downto 0);
-           dataOut : out STD_LOGIC_VECTOR (15 downto 0);
+           carryIn : in STD_LOGIC;
+           result : out STD_LOGIC_VECTOR (15 downto 0);
            C : out STD_LOGIC;
            Z : out STD_LOGIC;
            N : out STD_LOGIC);
-end component;
+    end component;
+    
+  component LU is
+    Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
+           B : in STD_LOGIC_VECTOR (15 downto 0);
+           op : in STD_LOGIC_VECTOR(2 downto 0);
+           resultado : out STD_LOGIC_VECTOR (15 downto 0);
+           Zlu : out STD_LOGIC);
+    end component;
 begin
    --- Se conectan los puestos
-   G1: fulladder port map (A, B, carryIn, resultFulladder, cFulladder,zFulladder,nFulladder);
-
+   G1: fulladder port map (A => A,
+                           regB => B,
+                           carryIn => carryIn,  
+                           C => cFulladder,
+                           Z => zFulladder,
+                           N => nFulladder,
+                           result => resultFulladder);
+   L1: LU port map (A => A,
+                    B => B,
+                    Zlu => zLU,
+                    op => SelALU,
+                    resultado => resultLU ) ;
+                    
    --- Se definen variables que se puedan necesitar para cada modulo
    carryIn <= selALU(0);
 
 
   --- Aquí se realiza la asignacion da los datos de salida de la ALU
    with selALU select
-        dataOut <= resultFulladder when "000", resultFulladder when "010", "0000000000000000" when others;
+        dataOut <= resultFulladder when "000",
+                   resultFulladder when "001",
+                   resultLU when "010",
+                   resultLU when "011",
+                   resultLU when "100",
+                   resultLU when "101",
+          "0000000000000000" when others;
+          
    with selALU select
-        C <= cFullader when "000", cFulladder when "010", "0000000000000000" when others;
+        C <= cFulladder when "000", cFulladder when "001", '0' when others;
    with selALU select
-        Z <= zFulladder when "000", zFulladder when "010", "0000000000000000" when others;
+                   Z <= zFulladder when "000", 
+                   zFulladder when "001", 
+                   zLU when "010",
+                   zLU when "011",
+                   zLU when "100",
+                   zLU when "101",
+                   '0' when others;
+                   
    with selALU select
-        N <= nFulladder when "000", nFulladder when "010", "0000000000000000" when others;
+        N <= nFulladder when "000", nFulladder when "001", '0' when others;
                                  
 
-        
-
-
-
-
-
+     
 
 end Behavioral;
