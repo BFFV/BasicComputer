@@ -53,7 +53,7 @@ CODE:
                      ADD (resultado)
                      MOV A, (factorA)
                      DEC A
-                     MOV (factorA)
+                     MOV (factorA), A
                      JMP multiplicacion
     JMP end
      end: JMP end
