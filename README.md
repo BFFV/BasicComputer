@@ -32,7 +32,7 @@ Para esta entrega lo que realicé fue el sumador/restador de la ALU e incorporal
 - fulladder.vhd
 - ALU.vhd
 
- Además escribí el algoritmo para multiplicar en assembly.
+ Además escribí el algoritmo para multiplicar en assembly y participé en la transcripción de este código a lenguaje de máquina.
 
 
  ## Multiplicación
@@ -69,3 +69,4 @@ CODE:
           a - 1
      return resultado
  ```
+
