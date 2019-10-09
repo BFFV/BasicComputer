@@ -161,8 +161,8 @@ led <= control;
 ------------------------ ALU ------------------------
 
 PU: ALU port map(
-    A => "1111111111111111",
-    B => "0000000000000000",
+    A => "0000000000000001",
+    B => "1111111111111111",
     selALU => control(3 downto 1),
     dataOut => result,
     C => status(0),
@@ -175,7 +175,7 @@ DMem: RAM port map(
     clock => compClk,
     write => control(0),
     address => "000000000000",
-    datain => "0000000000000000",
+    datain => result,
     dataout => memOut);
 
 ------------------------ ROM ------------------------
