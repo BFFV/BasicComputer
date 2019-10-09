@@ -161,7 +161,7 @@ led <= control;
 ------------------------ ALU ------------------------
 
 PU: ALU port map(
-    A => "0000000000000000",
+    A => "1111111111111111",
     B => "0000000000000000",
     selALU => control(3 downto 1),
     dataOut => result,
@@ -187,10 +187,10 @@ IMem: ROM port map(
 ------------------------ Display ------------------------
 
 Display: Display_Controller port map(
-    dis_a => "0000",
-    dis_b => "0000",
-    dis_c => "0000",
-    dis_d => "0000",
+    dis_a => result(7 downto 4),
+    dis_b => result(3 downto 0),
+    dis_c => result(7 downto 4),
+    dis_d => result(3 downto 0),
     clk => clk,
     seg => seg,
     an => an);

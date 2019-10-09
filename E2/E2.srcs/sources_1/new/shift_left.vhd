@@ -1,47 +1,13 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 08.10.2019 09:34:25
--- Design Name: 
--- Module Name: shift_left - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity shift_lft is
-    Port ( s_entrada : in STD_LOGIC_VECTOR (15 downto 0);
-           s_salida : out STD_LOGIC_VECTOR (15 downto 0);
-           s_carry: out STD_LOGIC);
+    Port (s_in : in STD_LOGIC_VECTOR (15 downto 0);
+          s_out : out STD_LOGIC_VECTOR (15 downto 0);
+          s_carry: out STD_LOGIC);
 end shift_lft;
 
 architecture Behavioral of shift_lft is
-
-signal s_in: STD_LOGIC_VECTOR (15 downto 0);  
-signal s_out: STD_LOGIC_VECTOR (15 downto 0);
-signal carry: STD_LOGIC;
 
 begin
 
@@ -61,7 +27,6 @@ s_out(12) <= s_in(11);
 s_out(13) <= s_in(12);
 s_out(14) <= s_in(13);
 s_out(15) <= s_in(14);
-carry <= s_in(15);
-
+s_carry <= s_in(15);
 
 end Behavioral;

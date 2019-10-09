@@ -15,14 +15,14 @@ end ControlUnit;
 
 architecture Behavioral of ControlUnit is
 
-signal movOut : STD_LOGIC_VECTOR (10 downto 0);
-signal opOut : STD_LOGIC_VECTOR (10 downto 0);
-signal shnOut : STD_LOGIC_VECTOR (10 downto 0);
-signal incOut : STD_LOGIC_VECTOR (10 downto 0);
-signal cmpOut : STD_LOGIC_VECTOR (10 downto 0);
-signal jmpOut : STD_LOGIC_VECTOR (10 downto 0);
-signal muxStat : STD_LOGIC;
-signal selectOut : STD_LOGIC_VECTOR (10 downto 0);
+signal movOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";     --- MOV Configuration ---
+signal opOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";      --- ADD/SUB/AND/OR/XOR Configuration ---
+signal shnOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";     --- NOT/SHL/SHR Configuration ---
+signal incOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";     --- INC/DEC Configuration ---
+signal cmpOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";     --- CMP Configuration ---
+signal jmpOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";     --- JMP/JEQ/JNE Configuration ---
+signal muxStat : STD_LOGIC := '0';                                   --- Conditional JMP Muxer ---
+signal selectOut : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";  --- Control Signals ---
 
 begin
 
