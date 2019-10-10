@@ -12,6 +12,17 @@ entity ALU is
 end ALU;
 
 architecture Behavioral of ALU is
+    
+  signal resultLU: STD_LOGIC_VECTOR(15 downto 0);
+    
+  component LU is
+    Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
+           B : in STD_LOGIC_VECTOR (15 downto 0);
+           op : in STD_LOGIC_VECTOR(2 downto 0);
+           resultado : out STD_LOGIC_VECTOR (15 downto 0);
+           Zlu : out STD_LOGIC);
+    end component;
+
 
 component fulladder is
     Port (A : in STD_LOGIC_VECTOR (15 downto 0);
@@ -45,6 +56,34 @@ signal resB : STD_LOGIC := '0';                                                 
 
 begin
 
+   L1: LU port map (A => A,
+                    B => B,
+                    Zlu => zLU,
+                    op => SelALU,
+                    resultado => resultLU ) ;
+                    
+  --- Aquí se realiza la asignacion da los datos de salida de la ALU
+   with selALU select
+        dataOut <= resultFulladder when "000",
+                   resultFulladder when "001",
+                   resultLU when "010",
+                   resultLU when "011",
+                   resultLU when "100",
+                   resultLU when "101",
+          "0000000000000000" when others;
+          
+   with selALU select
+        C <= cFulladder when "000", cFulladder when "001", '0' when others;
+   with selALU select
+                   Z <= zFulladder when "000", 
+                   zFulladder when "001", 
+                   zLU when "010",
+                   zLU when "011",
+                   zLU when "100",
+                   zLU when "101",
+                   '0' when others;
+                  
+                                 
 FA: fulladder port map (
     A => A,
     regB => B,

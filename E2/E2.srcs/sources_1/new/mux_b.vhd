@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 03.10.2019 01:25:29
+-- Create Date: 09.10.2019 19:40:56
 -- Design Name: 
--- Module Name: Status - Behavioral
+-- Module Name: mux_b - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,22 +31,24 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity Status is
-    Port ( status : in STD_LOGIC_VECTOR(2 downto 0);
-           clock : in STD_LOGIC;
-           statusOut : out STD_LOGIC_VECTOR (2 downto 0));
-end Status;
+entity mux_b is
+ Port (  
+      B      : in  std_logic_vector(15 downto 0);
+      SelB     : in  std_logic_vector(1 downto 0);
+      Lit      : in std_logic_vector(15 downto 0);
+      DRam     : in std_logic_vector(15 downto 0);
+      DataOut       : out std_logic_vector(15 downto 0) );
+end mux_b;
 
-architecture Behavioral of Status is
-
+architecture Behavioral of mux_b is
 
 begin
 
-status_prosses : process (clock)           -- Proceso sensible a clock.
-        begin
-          if (rising_edge(clock)) then  -- Condición de flanco de subida de clock.            
-           StatusOut <= status;
-          end if;
-        end process;         
+with SelB select
+    DataOut <= B when "00",
+       Lit when "10",
+       "0000000000000000" when "01",
+       DRam when "11",
+       B when others;
 
 end Behavioral;
