@@ -182,7 +182,7 @@ IMem: ROM port map(
     address => "000000000000",
     dataout => romOut);
     
-ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIn' for Switches input (Testing)
+ins <= swIns(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
 
 ------------------------ Display ------------------------
 

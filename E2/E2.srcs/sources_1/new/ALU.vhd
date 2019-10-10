@@ -12,17 +12,6 @@ entity ALU is
 end ALU;
 
 architecture Behavioral of ALU is
-    
-  signal resultLU: STD_LOGIC_VECTOR(15 downto 0);
-    
-  component LU is
-    Port ( A : in STD_LOGIC_VECTOR (15 downto 0);
-           B : in STD_LOGIC_VECTOR (15 downto 0);
-           op : in STD_LOGIC_VECTOR(2 downto 0);
-           resultado : out STD_LOGIC_VECTOR (15 downto 0);
-           Zlu : out STD_LOGIC);
-    end component;
-
 
 component fulladder is
     Port (A : in STD_LOGIC_VECTOR (15 downto 0);
@@ -30,6 +19,13 @@ component fulladder is
           carryIn : in STD_LOGIC;
           result : out STD_LOGIC_VECTOR (15 downto 0);
           carryOut : out STD_LOGIC);
+end component;
+
+component LU is
+    Port (A : in STD_LOGIC_VECTOR (15 downto 0);
+          B : in STD_LOGIC_VECTOR (15 downto 0);
+          op : in STD_LOGIC_VECTOR(2 downto 0);
+          resultado : out STD_LOGIC_VECTOR (15 downto 0));
 end component;
 
 component shift_lft is
@@ -46,6 +42,7 @@ end component;
 
 signal resultFulladder: STD_LOGIC_VECTOR(15 downto 0) := "0000000000000000";    --- ADD/SUB Output ---
 signal cFulladder : STD_LOGIC := '0';                                           --- ADD/SUB Carry ---
+signal resultLU: STD_LOGIC_VECTOR(15 downto 0) := "0000000000000000";           --- LU Output ---
 signal shl_salida : STD_LOGIC_VECTOR(15 downto 0) := "0000000000000000";        --- SHL Output ---
 signal shl_carry : STD_LOGIC := '0';                                            --- SHL Carry ---
 signal shr_salida : STD_LOGIC_VECTOR(15 downto 0) := "0000000000000000";        --- SHR Output ---
@@ -56,34 +53,12 @@ signal resB : STD_LOGIC := '0';                                                 
 
 begin
 
-   L1: LU port map (A => A,
-                    B => B,
-                    Zlu => zLU,
-                    op => SelALU,
-                    resultado => resultLU ) ;
-                    
-  --- Aquí se realiza la asignacion da los datos de salida de la ALU
-   with selALU select
-        dataOut <= resultFulladder when "000",
-                   resultFulladder when "001",
-                   resultLU when "010",
-                   resultLU when "011",
-                   resultLU when "100",
-                   resultLU when "101",
-          "0000000000000000" when others;
-          
-   with selALU select
-        C <= cFulladder when "000", cFulladder when "001", '0' when others;
-   with selALU select
-                   Z <= zFulladder when "000", 
-                   zFulladder when "001", 
-                   zLU when "010",
-                   zLU when "011",
-                   zLU when "100",
-                   zLU when "101",
-                   '0' when others;
-                  
-                                 
+L1: LU port map (
+    A => A,
+    B => B,
+    op => SelALU,
+    resultado => resultLU);
+
 FA: fulladder port map (
     A => A,
     regB => B,
@@ -110,7 +85,7 @@ selOp: process(resultFulladder, cFulladder, selALU, shl_salida, shl_carry, shr_s
             when "001" => result <= resultFulladder; C <= cFulladder;
             when "110" => result <= shl_salida; C <= shl_carry;
             when "111" => result <= shr_salida; C <= shr_carry;
-            when others => result <= "0000000000000000";
+            when others => result <= resultLU; C <= '0';
         end case;
 end process selOp;
 
