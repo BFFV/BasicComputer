@@ -3,7 +3,7 @@ use IEEE.STD_LOGIC_1164.ALL;
 
 entity Computer is
     Port (clk : in STD_LOGIC;
-          sw : in STD_LOGIC_VECTOR (13 downto 0);
+          sw : in STD_LOGIC_VECTOR (15 downto 0);
           btnClk : in STD_LOGIC;
           btnSlow : in STD_LOGIC;
           btnFast : in STD_LOGIC;
@@ -72,23 +72,22 @@ component Clock_Divider is
           clock : out STD_LOGIC);
 end component;
 
-signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000"; --- Control Instruction ---
-signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                --- Status Flags ---
-signal control : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";      --- Control Signals ---
-signal DbtnClk : STD_LOGIC := '0';                                     --- Manual Clock Input ---
-signal DbtnSlow : STD_LOGIC := '0';                                    --- Decrease Clock Speed ---
-signal DbtnFast : STD_LOGIC := '0';                                    --- Increase Clock Speed ---   
-signal DbtnSel : STD_LOGIC := '0';                                     --- Switch Clock Mode (Manual/Automatic) ---
-signal selClk : STD_LOGIC := '0';                                      --- Clock Selector ---
-signal autoClk : STD_LOGIC := '0';                                     --- Automatic Clock ---
-signal clkSpeed : STD_LOGIC_VECTOR (1 downto 0) := "11";               --- Automatic Clock Speed ---
-signal compClk : STD_LOGIC := '0';                                     --- Current Clock ---
-signal result : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";  --- ALU Result ---
-
-
-signal status : STD_LOGIC_VECTOR (2 downto 0) := "000";
-signal memOut : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";
-signal romOut : STD_LOGIC_VECTOR (35 downto 0) := "000000000000000000000000000000000000";
+signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                      --- Control Instruction From ROM ---
+signal swIns : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                    --- Control Instruction From Switches (Testing) ---
+signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                                     --- Status Codes ---
+signal statOut : STD_LOGIC_VECTOR (2 downto 0) := "000";                                    --- Status Register Output ---
+signal control : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";                           --- Control Signals ---
+signal DbtnClk : STD_LOGIC := '0';                                                          --- Manual Clock Input ---
+signal DbtnSlow : STD_LOGIC := '0';                                                         --- Decrease Clock Speed ---
+signal DbtnFast : STD_LOGIC := '0';                                                         --- Increase Clock Speed ---   
+signal DbtnSel : STD_LOGIC := '0';                                                          --- Switch Clock Mode (Manual/Automatic) ---
+signal selClk : STD_LOGIC := '0';                                                           --- Clock Selector ---
+signal autoClk : STD_LOGIC := '0';                                                          --- Automatic Clock ---
+signal clkSpeed : STD_LOGIC_VECTOR (1 downto 0) := "11";                                    --- Automatic Clock Speed ---
+signal compClk : STD_LOGIC := '0';                                                          --- Current Clock ---
+signal result : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- ALU Result ---
+signal memOut : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- RAM Data Out ---
+signal romOut : STD_LOGIC_VECTOR (35 downto 0) := "000000000000000000000000000000000000";   --- ROM Instruction Out ---
 
 begin
 
@@ -129,15 +128,14 @@ btnPress : process(DbtnClk, DbtnSlow, DbtnFast, DbtnSel, autoClk, selClk, clkSpe
             clkSpeed(1) <= clkSpeed(1) xnor clkSpeed(0);
             clkSpeed(0) <= not clkSpeed(0);
         end if;
-        if (rising_edge(DbtnClk) and selClk = '1') then
-            ins(19 downto 11) <= "000000000";
-            ins(10 downto 0) <= sw(10 downto 0);
-            statIn(2 downto 0) <= sw(13 downto 11);
+        if (rising_edge(DbtnClk) and selClk = '1') then     --- Switches Input (Testing) ---
+            swIns(19 downto 16) <= "0000";
+            swIns(15 downto 0) <= sw(15 downto 0);
         end if;
         if (rising_edge(DbtnSel)) then
             selClk <= not selClk;
         end if;
-        case selClk is                         --- Select Clock ---
+        case selClk is                                      --- Select Clock ---
             when '0' => compClk <= autoClk;
             when '1' => compClk <= DbtnClk;
         end case;
@@ -147,7 +145,7 @@ end process btnPress;
 
 CU: ControlUnit port map(
     insIn => ins,
-    statusIn => statIn(2 downto 0),
+    statusIn => statOut(2 downto 0),
     loadA => control(10),
     loadB => control(9),
     selA => control(8 downto 7),
@@ -165,9 +163,9 @@ PU: ALU port map(
     B => "1111111111111111",
     selALU => control(3 downto 1),
     dataOut => result,
-    C => status(0),
-    Z => status(2),
-    N => status(1));
+    C => statIn(0),
+    Z => statIn(2),
+    N => statIn(1));
 
 ------------------------ RAM ------------------------
 
@@ -183,6 +181,8 @@ DMem: RAM port map(
 IMem: ROM port map(
     address => "000000000000",
     dataout => romOut);
+    
+ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIn' for Switches input (Testing)
 
 ------------------------ Display ------------------------
 

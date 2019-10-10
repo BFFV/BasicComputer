@@ -78,6 +78,7 @@ end process selOp;
 dataOut <= result;
 
 ------------------------ Z/N Status Codes ------------------------
+
 resA <= ((result(0) or result(1)) or (result(2) or result(3))) or
  ((result(4) or result(5)) or (result(6) or result(7)));
 resB <= ((result(8) or result(9)) or (result(10) or result(11))) or
