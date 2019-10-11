@@ -5,7 +5,6 @@ entity Computer is
     Port (clk : in STD_LOGIC;
           sw : in STD_LOGIC_VECTOR (15 downto 0);
           btnClk : in STD_LOGIC;
-          btnSlow : in STD_LOGIC;
           btnFast : in STD_LOGIC;
           btnSel : in STD_LOGIC;
           led : out STD_LOGIC_VECTOR (10 downto 0);
@@ -50,6 +49,39 @@ component ROM is
           dataout : out STD_LOGIC_VECTOR (35 downto 0));
 end component;
 
+component Status is
+    Port (status : in STD_LOGIC_VECTOR (2 downto 0);
+          clock : in STD_LOGIC;
+          statusOut : out STD_LOGIC_VECTOR (2 downto 0));
+end component;
+
+component RegA is
+    Port (loadA : in STD_LOGIC;
+          clock : in STD_LOGIC;
+          dataIn : in STD_LOGIC_VECTOR (15 downto 0);
+          dataOut : out STD_LOGIC_VECTOR (15 downto 0);
+          selA : in STD_LOGIC_VECTOR (1 downto 0);
+          valueA : out STD_LOGIC_VECTOR (15 downto 0));
+end component;
+
+component RegB is
+    Port (loadB : in STD_LOGIC;
+          clock : in STD_LOGIC;
+          dataIn : in STD_LOGIC_VECTOR (15 downto 0);
+          dataOut : out STD_LOGIC_VECTOR (15 downto 0);
+          selB : in STD_LOGIC_VECTOR (1 downto 0);
+          memIn : in STD_LOGIC_VECTOR (15 downto 0);
+          lit : in STD_LOGIC_VECTOR (15 downto 0);
+          valueB : out STD_LOGIC_VECTOR (15 downto 0));
+end component;
+
+component PC is
+    Port (loadPC : in STD_LOGIC;
+          clock : in STD_LOGIC;
+          countIn : in STD_LOGIC_VECTOR (11 downto 0);
+          countOut : out STD_LOGIC_VECTOR (11 downto 0));
+end component;
+
 component Display_Controller is
     Port (dis_a : in STD_LOGIC_VECTOR (3 downto 0);
           dis_b : in STD_LOGIC_VECTOR (3 downto 0);
@@ -78,7 +110,6 @@ signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                         
 signal statOut : STD_LOGIC_VECTOR (2 downto 0) := "000";                                    --- Status Register Output ---
 signal control : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";                           --- Control Signals ---
 signal DbtnClk : STD_LOGIC := '0';                                                          --- Manual Clock Input ---
-signal DbtnSlow : STD_LOGIC := '0';                                                         --- Decrease Clock Speed ---
 signal DbtnFast : STD_LOGIC := '0';                                                         --- Increase Clock Speed ---   
 signal DbtnSel : STD_LOGIC := '0';                                                          --- Switch Clock Mode (Manual/Automatic) ---
 signal selClk : STD_LOGIC := '0';                                                           --- Clock Selector ---
@@ -88,6 +119,11 @@ signal compClk : STD_LOGIC := '0';                                              
 signal result : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- ALU Result ---
 signal memOut : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- RAM Data Out ---
 signal romOut : STD_LOGIC_VECTOR (35 downto 0) := "000000000000000000000000000000000000";   --- ROM Instruction Out ---
+signal opA : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                          --- ALU Input A ---
+signal opB : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                          --- ALU Input B ---
+signal valA : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                         --- A Register Value ---
+signal valB : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                         --- B Register Value ---
+signal romAdd : STD_LOGIC_VECTOR (11 downto 0) := "000000000000";                           --- ROM Address ---
 
 begin
 
@@ -97,11 +133,6 @@ DClk: Debouncer port map(
     clk => clk,
     signalin => btnClk,
     signalout => DbtnClk);
-
-DSlow: Debouncer port map(
-    clk => clk,
-    signalin => btnSlow,
-    signalout => DbtnSlow);
 
 DFast: Debouncer port map(
     clk => clk,
@@ -118,34 +149,38 @@ ClkDivider: Clock_Divider port map(
     speed => clkSpeed,
     clock => autoClk);
 
-btnPress : process(DbtnClk, DbtnSlow, DbtnFast, DbtnSel, autoClk, selClk, clkSpeed)
+pressClk : process(DbtnClk, selClk, sw)
     begin
-        if (rising_edge(DbtnSlow) and (clkSpeed /= "11")) then
-            clkSpeed(1) <= clkSpeed(1) xor clkSpeed(0);
-            clkSpeed(0) <= not clkSpeed(0);
-        end if;
-        if (rising_edge(DbtnFast) and (clkSpeed /= "00")) then
-            clkSpeed(1) <= clkSpeed(1) xnor clkSpeed(0);
-            clkSpeed(0) <= not clkSpeed(0);
-        end if;
         if (rising_edge(DbtnClk) and selClk = '1') then     --- Switches Input (Testing) ---
             swIns(19 downto 16) <= "0000";
             swIns(15 downto 0) <= sw(15 downto 0);
         end if;
+end process pressClk;
+
+pressSel : process(DbtnSel, selClk, autoClk, DbtnClk)
+    begin
         if (rising_edge(DbtnSel)) then
             selClk <= not selClk;
         end if;
-        case selClk is                                      --- Select Clock ---
-            when '0' => compClk <= autoClk;
-            when '1' => compClk <= DbtnClk;
-        end case;
-end process btnPress;
+end process pressSel;
+
+with selClk select                                          --- Select Clock ---
+    compClk <= autoClk when '0',
+               DbtnClk when '1';
+
+pressSpeed : process(DbtnFast, clkSpeed)
+    begin
+        if (rising_edge(DbtnFast)) then                     --- Increase Clock Speed ---
+            clkSpeed(0) <= not clkSpeed(0);
+            clkSpeed(1) <= clkSpeed(1) xnor clkSpeed(0);
+        end if;
+end process pressSpeed;
 
 ------------------------ Control Unit ------------------------
 
 CU: ControlUnit port map(
     insIn => ins,
-    statusIn => statOut(2 downto 0),
+    statusIn => statOut,
     loadA => control(10),
     loadB => control(9),
     selA => control(8 downto 7),
@@ -159,8 +194,8 @@ led <= control;
 ------------------------ ALU ------------------------
 
 PU: ALU port map(
-    A => "0000000000000001",
-    B => "1111111111111111",
+    A => opA,
+    B => opB,
     selALU => control(3 downto 1),
     dataOut => result,
     C => statIn(0),
@@ -172,25 +207,62 @@ PU: ALU port map(
 DMem: RAM port map(
     clock => compClk,
     write => control(0),
-    address => "000000000000",
+    address => romOut(31 downto 20),
     datain => result,
     dataout => memOut);
 
 ------------------------ ROM ------------------------
 
 IMem: ROM port map(
-    address => "000000000000",
+    address => romAdd,
     dataout => romOut);
     
-ins <= swIns(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
+ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
+
+------------------------ Status Register ------------------------
+
+Stat: Status port map(
+    status => statIn,
+    clock => compClk,
+    statusOut => statOut);
+
+------------------------ A Register ------------------------
+
+A: RegA port map(
+    loadA => control(10),
+    clock => compClk,
+    dataIn => result,
+    dataOut => opA,
+    selA => control(8 downto 7),
+    valueA => valA);
+
+------------------------ B Register ------------------------
+
+B: RegB port map(
+    loadB => control(9),
+    clock => compClk,
+    dataIn => result,
+    dataOut => opB,
+    selB => control(6 downto 5),
+    memIn => memOut,
+    lit => romOut(35 downto 20),
+    valueB => valB);
+
+------------------------ Program Counter ------------------------
+
+Counter: PC port map(
+    loadPC => control(4),
+    clock => compClk,
+    countIn => romOut(31 downto 20),
+    countOut => romAdd);
 
 ------------------------ Display ------------------------
 
 Display: Display_Controller port map(
-    dis_a => result(7 downto 4),
-    dis_b => result(3 downto 0),
-    dis_c => result(7 downto 4),
-    dis_d => result(3 downto 0),
+    dis_a => valA(7 downto 4),
+    dis_b => valA(3 downto 0),
+    dis_c => valB(7 downto 4),
+    dis_d => valB(3 downto 0),
     clk => clk,
     seg => seg,
     an => an);

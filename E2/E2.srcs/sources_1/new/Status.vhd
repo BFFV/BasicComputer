@@ -1,52 +1,25 @@
-----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
--- 
--- Create Date: 03.10.2019 01:25:29
--- Design Name: 
--- Module Name: Status - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
--- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
-
-
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity Status is
-    Port ( status : in STD_LOGIC_VECTOR(2 downto 0);
-           clock : in STD_LOGIC;
-           statusOut : out STD_LOGIC_VECTOR (2 downto 0));
+    Port (status : in STD_LOGIC_VECTOR(2 downto 0);
+          clock : in STD_LOGIC;
+          statusOut : out STD_LOGIC_VECTOR (2 downto 0));
 end Status;
 
 architecture Behavioral of Status is
 
+signal regVal : STD_LOGIC_VECTOR (2 downto 0) := "000";
 
 begin
 
-status_prosses : process (clock)           -- Proceso sensible a clock.
-        begin
-          if (rising_edge(clock)) then  -- Condici√≥n de flanco de subida de clock.            
-           StatusOut <= status;
-          end if;
-        end process;         
+status_process : process (clock, status)           -- Proceso sensible al clock
+    begin
+        if (rising_edge(clock)) then  -- CondiciÛn de flanco de subida del clock
+            regVal <= status;
+        end if;
+end process;         
+
+statusOut <= regVal;
 
 end Behavioral;

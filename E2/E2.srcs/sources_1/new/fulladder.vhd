@@ -33,13 +33,9 @@ begin
 
 ------------------------ Select ADD/SUB ------------------------
 
-selSign: process(carryIn, regB)
-    begin
-        case carryIn is
-            when '1' => B <= not regB;
-            when others => B <= regB;
-        end case;
-end process selSign;
+with carryIn select
+    B <= not regB when '1',
+         regB when others;
 
 ------------------------ Half Adders ------------------------
 -- Bit 1

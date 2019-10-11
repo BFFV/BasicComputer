@@ -12,15 +12,11 @@ architecture Behavioral of LU is
 
 begin
 
-selOp: process(op, A, B)
-    begin
-        case op is
-            when "010" => resultado <= A and B;
-            when "011" => resultado <= A or B;
-            when "100" => resultado <= not A;
-            when "101" => resultado <= A xor B;
-            when others => resultado <= "0000000000000000";
-        end case;
-end process selOp;
+with op select
+    resultado <= A and B when "010",
+                 A or B when "011",
+                 not A when "100",
+                 A xor B when "101",
+                 "0000000000000000" when others;
 
 end Behavioral;

@@ -78,16 +78,19 @@ SHRght: shift_rght port map(
 
 ------------------------ Select Operation ------------------------
 
-selOp: process(resultFulladder, cFulladder, selALU, shl_salida, shl_carry, shr_salida, shr_carry)
-    begin
-        case selALU is
-            when "000" => result <= resultFulladder; C <= cFulladder;
-            when "001" => result <= resultFulladder; C <= cFulladder;
-            when "110" => result <= shl_salida; C <= shl_carry;
-            when "111" => result <= shr_salida; C <= shr_carry;
-            when others => result <= resultLU; C <= '0';
-        end case;
-end process selOp;
+with selALU select
+    result <= resultFulladder when "000",
+              resultFulladder when "001",
+              shl_salida when "110",
+              shr_salida when "111",
+              resultLU when others;
+
+with selALU select
+    C <= cFulladder when "000",
+         cFulladder when "001",
+         shl_carry when "110",
+         shr_carry when "111",
+         '0' when others;
 
 dataOut <= result;
 

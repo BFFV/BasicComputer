@@ -63,34 +63,28 @@ cmpOut(10 downto 7) <= "0000";
 
 ------------------------ JMP/JEQ/JNE ------------------------
 jmpOut(3 downto 0) <= "0000";
-process (insIn, statusIn) is
-    begin
-        case insIn(6 downto 4) is
-            when "000" => muxStat <= '0';
-            when "001" => muxStat <= statusIn(2);
-            when "010" => muxStat <= statusIn(1);
-            when "011" => muxStat <= statusIn(1) or statusIn(2);
-            when "100" => muxStat <= statusIn(0);
-            when others => muxStat <= '0';
-        end case;
-end process;
+
+with insIn(6 downto 4) select
+    muxStat <= statusIn(2) when "001",
+               statusIn(1) when "010",
+               statusIn(1) or statusIn(2) when "011",
+               statusIn(0) when "100",
+               '0' when others;
+
 jmpOut(4) <= insIn(7) xnor muxStat;
 jmpOut(10 downto 5) <= "000000";
 
 ------------------------ Select Operation ------------------------
-process (insIn, movOut, opOut, shnOut, incOut, cmpOut, jmpOut) is
-    begin
-        case insIn(3 downto 0) is
-            when "0000" => selectOut(10 downto 0) <= "00000000000";
-            when "0001" => selectOut(10 downto 0) <= movOut(10 downto 0);
-            when "0010" => selectOut(10 downto 0) <= opOut(10 downto 0);
-            when "0011" => selectOut(10 downto 0) <= shnOut(10 downto 0);
-            when "0100" => selectOut(10 downto 0) <= incOut(10 downto 0);
-            when "0101" => selectOut(10 downto 0) <= cmpOut(10 downto 0);
-            when "0110" => selectOut(10 downto 0) <= jmpOut(10 downto 0);
-            when others => selectOut(10 downto 0) <= "00000000000";
-        end case;
-end process;
+
+with insIn(3 downto 0) select
+    selectOut <= movOut when "0001",
+                 opOut when "0010",
+                 shnOut when "0011",
+                 incOut when "0100",
+                 cmpOut when "0101",
+                 jmpOut when "0110",
+                 "00000000000" when others;
+
 loadA <= selectOut(10);
 loadB <= selectOut(9);
 selA <= selectOut(8 downto 7);
