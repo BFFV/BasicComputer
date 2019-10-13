@@ -1,4 +1,4 @@
-# Bitácora del Proyecto
+﻿# Bitácora del Proyecto :pencil:
 
 # Funcionamiento
 
