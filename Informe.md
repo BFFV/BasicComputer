@@ -89,7 +89,7 @@ Arquitectura:
 
     - ADD/SUB: Corresponde al valor del CarryOut del último fulladder (el más significativo).
     - AND/OR/NOT/XOR: Toma valor 0.
-    - SHL/SHR: Corresponde al valor del bit más significativo y menos significativo del resultado, respectivamente.
+    - SHL/SHR: Corresponde al valor del bit más significativo y menos significativo del vector de entrada, respectivamente.
 
 ### Multiplexor A: 
 
