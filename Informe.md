@@ -227,7 +227,7 @@ Con el botón de arriba (btnSel) se puede ALTERNAR en tiempo real entre utilizar
 
 ### Input con Switches:
 
-Se puede CAMBIAR una línea en el apartado de la ROM dentro del módulo `Computer.vhd` para poder utilizar los switches a modo de input de instrucciones (en vez de recibirlas desde la ROM). Esto está permitido sólo en el modo de Clock manual (al estar en el modo automático se leerá la última configuración de switches que se usó en el modo manual). Como son sólo 16 switches, estos pueden representar solamente los 16 bits menos significativos de las instrucciones. Esto significa que no permiten elegir literal, sin embargo resultan útiles para probar distintas operaciones en el computador antes de escribirlas dentro de la ROM. Cabe destacar que al cambiar la posición de los switches y apretar el Clock manual, el efecto de dicho cambio se reflejará recién al apretar el Clock una segunda vez, ya que la primera es utilizada para leer los switches en flanco de subida.
+Se puede CAMBIAR una línea en el apartado de la ROM dentro del módulo `Computer.vhd` para poder utilizar los switches a modo de input de instrucciones (en vez de recibirlas desde la ROM). Esto está permitido sólo en el modo de Clock manual (al estar en el modo automático se leerá la última configuración de switches que se usó en el modo manual). Como son sólo 16 switches, estos pueden representar solamente los 16 bits menos significativos de las instrucciones. Esto significa que no permiten elegir literal, sin embargo resultan útiles para probar distintas operaciones en el computador antes de escribirlas dentro de la ROM.
 
 # Estructura de las Instrucciones
 
