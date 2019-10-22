@@ -33,7 +33,12 @@ component ControlUnit is
           selB : out STD_LOGIC_VECTOR (1 downto 0);
           loadPC : out STD_LOGIC;
           selALU : out STD_LOGIC_VECTOR (2 downto 0);
-          W : out STD_LOGIC);
+          W : out STD_LOGIC;
+          selAdd : out STD_LOGIC_VECTOR (1 downto 0);
+          incSP : out STD_LOGIC;
+          decSP : out STD_LOGIC;
+          selPC : out STD_LOGIC;
+          selDIn : out STD_LOGIC);
 end component;
 
 component RAM is
@@ -108,7 +113,7 @@ signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";          
 signal swIns : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                    --- Control Instruction From Switches (Testing) ---
 signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                                     --- Status Codes ---
 signal statOut : STD_LOGIC_VECTOR (2 downto 0) := "000";                                    --- Status Register Output ---
-signal control : STD_LOGIC_VECTOR (10 downto 0) := "00000000000";                           --- Control Signals ---
+signal control : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";                     --- Control Signals ---
 signal DbtnClk : STD_LOGIC := '0';                                                          --- Manual Clock Input ---
 signal DbtnFast : STD_LOGIC := '0';                                                         --- Increase Clock Speed ---   
 signal DbtnSel : STD_LOGIC := '0';                                                          --- Switch Clock Mode (Manual/Automatic) ---
@@ -187,7 +192,12 @@ CU: ControlUnit port map(
     selB => control(6 downto 5),
     loadPC => control(4),
     selALU => control(3 downto 1),
-    W => control(0));
+    W => control(0),
+    selAdd => control(12 downto 11),
+    incSP => control(13),
+    decSP => control(14),
+    selPC => control(15),
+    selDIn => control(16));
 
 led <= control;
 

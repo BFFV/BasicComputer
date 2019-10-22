@@ -25,7 +25,9 @@ signal opOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";      --- A
 signal shnOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- NOT/SHL/SHR Configuration ---
 signal incOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- INC/DEC Configuration ---
 signal cmpOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- CMP Configuration ---
-signal jmpOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- JMP/JEQ/JNE Configuration ---
+signal jmpOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- JMP/JEQ/JNE/JGT/JGE/JLT/JLE/JCR Configuration ---
+signal pushOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";    --- CALL/PUSH Configuration ---
+signal popOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";     --- RET/POP Configuration ---
 signal muxStat : STD_LOGIC := '0';                                         --- Conditional JMP Muxer ---
 signal selectOut : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";  --- Control Signals ---
 
@@ -76,7 +78,7 @@ cmpOut(10 downto 7) <= "0000";
 cmpOut(11) <= insIn(6);
 cmpOut(16 downto 12) <= "00000";
 
------------------------- JMP/JEQ/JNE ------------------------
+------------------------ JMP/JEQ/JNE/JGT/JGE/JLT/JLE/JCR ------------------------
 jmpOut(3 downto 0) <= "0000";
 
 with insIn(6 downto 4) select
@@ -89,6 +91,25 @@ with insIn(6 downto 4) select
 jmpOut(4) <= insIn(7) xnor muxStat;
 jmpOut(16 downto 5) <= "000000000000";
 
+------------------------ CALL/PUSH ------------------------
+pushOut(3 downto 0) <= "0001";
+pushOut(4) <= insIn(5);
+pushOut(5) <= not insIn(4);
+pushOut(6) <= '0';
+pushOut(7) <= insIn(4);
+pushOut(15 downto 8) <= "01010000";
+pushOut(16) <= insIn(5);
+
+------------------------ RET/POP ------------------------
+popOut(3 downto 0) <= "0000";
+popOut(4) <= insIn(6);
+popOut(8 downto 5) <= "0111";
+popOut(9) <= insIn(4);
+popOut(10) <= insIn(5);
+popOut(12 downto 11) <= "10";
+popOut(13) <= (insIn(4) or insIn(5)) nor insIn(6);
+popOut(16 downto 14) <= "010";
+
 ------------------------ Select Operation ------------------------
 
 with insIn(3 downto 0) select
@@ -98,6 +119,8 @@ with insIn(3 downto 0) select
                  incOut when "0100",
                  cmpOut when "0101",
                  jmpOut when "0110",
+                 pushOut when "0111",
+                 popOut when "1000",
                  "00000000000000000" when others;
 
 selDIn <= selectOut(16);

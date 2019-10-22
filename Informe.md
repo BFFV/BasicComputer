@@ -178,7 +178,7 @@ Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
 
-- valueB: Valor de salida del Registro B, conectado directamente al Display.
+- valueB: Valor de salida del Registro B, conectado directamente al Display. También se conecta al Multiplexor Address para realizar direccionamiento indirecto.
 
 Arquitectura: El módulo Registro B está compuesto por el Registro B y Multiplexor B, razón por la que recibe las señales de entrada de ambos componentes. Se encarga de almacenar valores en el Registro B (según la señal loadB y sólo en Flanco de Subida del Clock) y de entregar en la salida lo que se le indique con la señal selB.
 
@@ -325,7 +325,7 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - La operación de la ALU es siempre un SUB, por lo que selALU toma valor '001' y no aparece en la Zona de Señales. Las demás señales valen 0.
 
-### JMP/JEQ/JNE:
+### JMP/JEQ/JNE/JGT/JGE/JLT/JLE/JCR:
 
 - Zona de Operaciones: '0110'
 
@@ -346,15 +346,25 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Las demás señales de control valen 0.
 
-### :
+### CALL/PUSH:
 
-- Zona de Operaciones: '0101'
+- Zona de Operaciones: '0111'
 
-- Zona de Señales: '0000000000000' + selAdd (1 bit, se omite el primero) + selB (2 bits)
+- Zona de Señales: '00000000000000' + loadPC (1 bit) + selA (1 bit, se omite el primero)
 
-- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones CMP.
+- El bit más significativo de la señal de control selA NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones CALL/PUSH.
 
-- La operación de la ALU es siempre un SUB, por lo que selALU toma valor '001' y no aparece en la Zona de Señales. Las demás señales valen 0.
+- La señal selDIn toma el mismo valor que loadPC, el bit más significativo de selB es 0 y el menos significativo se obtiene aplicando un NOT al bit menos significativo de selA, selAdd toma valor '10' y las señales W y decSP toman ambas valor 1. Las demás señales de control valen 0.
+
+### RET/POP:
+
+- Zona de Operaciones: '1000'
+
+- Zona de Señales: '0000000000000' + loadPC (1 bit) + loadA (1 bit) + loadB (1 bit)
+
+- La señal incSP se obtiene aplicando (loadA OR loadB) NOR loadPC, selPC toma valor 1, selA toma valor '01', selB toma valor '11' y selAdd toma valor '10'. Las demás señales de control valen 0.
+
+- Las operaciones de este grupo ocurren en 2 ciclos del clock, por lo que cada una está compuesta por 2 instrucciones consecutivas.
 
 # Distribución del Trabajo
 
@@ -475,6 +485,15 @@ El computador creado soporta TODAS las instrucciones pedidas para la entrega. La
 | JLT       | Ins       | Ins              | 0000000000001010 | 0110                |
 | JLE       | Ins       | Ins              | 0000000000001011 | 0110                |
 | JCR       | Ins       | Ins              | 0000000000001100 | 0110                |
+| CALL      | Ins       | Ins              | 0000000000000010 | 0111                |
+| PUSH      | A         | 0000000000000000 | 0000000000000000 | 0111                |
+| PUSH      | B         | 0000000000000000 | 0000000000000001 | 0111                |
+| RET (1st) | -         | 0000000000000000 | 0000000000000000 | 1000                |
+| RET (2nd) | -         | 0000000000000000 | 0000000000000100 | 1000                |
+| POP (1st) | A         | 0000000000000000 | 0000000000000000 | 1000                |
+| POP (2nd) | A         | 0000000000000000 | 0000000000000010 | 1000                |
+| POP (1st) | B         | 0000000000000000 | 0000000000000000 | 1000                |
+| POP (2nd) | B         | 0000000000000000 | 0000000000000001 | 1000                |
 | NOP       | -         | 0000000000000000 | 0000000000000000 | 0000                |
 
 # Anexo - Entregas Pasadas
