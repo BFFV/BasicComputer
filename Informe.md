@@ -49,6 +49,21 @@ Señales de Salida:
 
 - W: Señal de control que habilita la carga de datos en la memoria RAM. Si toma valor 1 permite la carga.
 
+- selAdd: Señales de control que seleccionan el tipo de direccionamiento de la memoria RAM. Tienen las siguientes combinaciones posibles:
+  
+  - '00': Literal
+  - '01': Registro B
+  - '10': Stack Pointer
+  - '11': No se ocupa actualmente
+
+- incSP: Señal de control que incrementa en 1 el valor del Stack Pointer.
+
+- decSP: Señal de control que decrementa en 1 el valor del Stack Pointer.
+
+- selPC: Señal de control que selecciona la salida del multiplexor PC. Permite elegir entre cargar el PC con un Literal (toma valor 0) o con un valor guardado en la RAM (toma valor 1).
+
+- selDIn: Señal de control que selecciona la entrada de datos a la memoria RAM. Permite elegir entre cargar la RAM con la salida de la ALU (toma valor 0) o con el valor del PC + 1 (toma valor 1).
+
 Arquitectura: La Unidad de Control recibe una palabra de control de 20 bits, la que es decodificada según se explica en la sección 'Estructura de las Instrucciones'. Para lograr esto, primero se interpretan los 20 bits de todas las formas posibles según los tipos de operaciones (MOV, ADD, etc...), y posteriormente se utiliza un Multiplexor para determinar cuál de todas las interpretaciones es la correcta, revisando los 4 bits menos significativos de la palabra de control, ya que estos tienen codificado el tipo de operación a realizar (más detalles de esto en la sección 'Estructura de las Instrucciones').
 
 ### ALU: 
@@ -256,7 +271,9 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Zona de Operaciones: '0001'
 
-- Zona de Señales: '0000000000' + loadA (1 bit) + loadB (1 bit) + selA (2 bits) + selB (2 bits)
+- Zona de Señales: '000000000' + selAdd (1 bit, se omite el primero) + loadA (1 bit) + loadB (1 bit) + selA (2 bits) + selB (2 bits)
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones MOV.
 
 - El valor de la señal W (write) se obtiene haciendo loadA NOR loadB. Las demás señales valen 0.
 
@@ -264,7 +281,9 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Zona de Operaciones: '0010'
 
-- Zona de Señales: '000000000' + loadA (1 bit) + loadB (1 bit) + selB (2 bits) + selALU (3 bits)
+- Zona de Señales: '00000000' + selAdd (1 bit, se omite el primero) + loadA (1 bit) + loadB (1 bit) + selB (2 bits) + selALU (3 bits)
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones ADD/SUB/AND/OR/XOR.
 
 - El valor de la señal W (write) se obtiene haciendo loadA NOR loadB. Las demás señales valen 0.
 
@@ -274,7 +293,9 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Zona de Operaciones: '0011'
 
-- Zona de Señales: '000000000000' + loadA (1 bit) + loadB (1 bit) + selALU (2 bits, se omite el primero)
+- Zona de Señales: '00000000000' + selAdd (1 bit, se omite el primero) + loadA (1 bit) + loadB (1 bit) + selALU (2 bits, se omite el primero)
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones NOT/SHL/SHR.
 
 - El bit más significativo de la señal de control selALU NO está en la Zona de Señales de este grupo, ya que vale 1 para las operaciones NOT/SHL/SHR. Por lo tanto sólo los otros 2 bits aparecen en dicha Zona.
 
@@ -284,9 +305,11 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Zona de Operaciones: '0100'
 
-- Zona de Señales: '0000000000000' + selB (2 bits) + selALU (1 bit, se omiten los 2 primeros)
+- Zona de Señales: '000000000000' + selAdd (1 bit, se omite el primero) + selB (2 bits) + selALU (1 bit, se omiten los 2 primeros)
 
 - El LITERAL de la instrucción en la ROM deberá ser '0000000000000001' para todas las operaciones de este grupo (EXCEPTO las que requieran direccionar la memoria usando un literal), ya que las que lo ocupan requieren mover al Registro B el valor 1 (por ejemplo DEC A).
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones INC/DEC.
 
 - Los 2 bits más significativos de la señal de control selALU NO están en la Zona de Señales de este grupo, ya que valen 0 para las operaciones INC/DEC. Por lo tanto sólo el bit menos significativo aparece en dicha Zona (si toma valor 1 es un ADD, si toma valor 0 es un SUB).
 
@@ -296,7 +319,9 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Zona de Operaciones: '0101'
 
-- Zona de Señales: '00000000000000' + selB (2 bits)
+- Zona de Señales: '0000000000000' + selAdd (1 bit, se omite el primero) + selB (2 bits)
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones CMP.
 
 - La operación de la ALU es siempre un SUB, por lo que selALU toma valor '001' y no aparece en la Zona de Señales. Las demás señales valen 0.
 
@@ -320,6 +345,141 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 - El valor de la señal loadPC se obtiene haciendo compBit XNOR Value, donde Value es el valor representado en los statusBits. Por ejemplo para realizar JEQ se necesita que Z = 1 (puesto que al restar los números debe dar 0), por lo que los statusBits deben ser '001' (Status Code Z) y el compBit debe ser '1' (ya que se quiere que Z sea igual a 1).
 
 - Las demás señales de control valen 0.
+
+### :
+
+- Zona de Operaciones: '0101'
+
+- Zona de Señales: '0000000000000' + selAdd (1 bit, se omite el primero) + selB (2 bits)
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones CMP.
+
+- La operación de la ALU es siempre un SUB, por lo que selALU toma valor '001' y no aparece en la Zona de Señales. Las demás señales valen 0.
+
+# Distribución del Trabajo
+
+Lo más difícil fue
+
+A continuación se encuentra el trabajo realizado por cada integrante del grupo:
+
+## Benjamín F. Farías:
+
+
+
+## Karl M. Haller:
+
+
+
+## Diego Navarro:
+
+
+
+## Juan I. Parot:
+
+
+
+## Juan A. Romero: 
+
+
+
+
+# Instrucciones Soportadas
+
+El computador creado soporta TODAS las instrucciones pedidas para la entrega. La tabla con dichas instrucciones y sus palabras de control se muestra a continuación:
+
+| Operación | Operandos | Literal          | Zona de Señales  | Zona de Operaciones |
+|-----------|-----------|------------------|------------------|---------------------|
+| MOV       | A,B       | 0000000000000000 | 0000000000100100 | 0001                |
+| MOV       | B,A       | 0000000000000000 | 0000000000010001 | 0001                |
+| MOV       | A,Lit     | Lit              | 0000000000100110 | 0001                |
+| MOV       | B,Lit     | Lit              | 0000000000010110 | 0001                |
+| MOV       | A,(Dir)   | Dir              | 0000000000100111 | 0001                |
+| MOV       | B,(Dir)   | Dir              | 0000000000010111 | 0001                |
+| MOV       | (Dir),A   | Dir              | 0000000000000001 | 0001                |
+| MOV       | (Dir),B   | Dir              | 0000000000000100 | 0001                |
+| MOV       | A,(B)     | 0000000000000000 | 0000000001100111 | 0001                |
+| MOV       | B,(B)     | 0000000000000000 | 0000000001010111 | 0001                |
+| MOV       | (B),A     | 0000000000000000 | 0000000001000001 | 0001                |
+| MOV       | (B),Lit   | Lit              | 0000000001000110 | 0001                |
+| ADD       | A,B       | 0000000000000000 | 0000000001000000 | 0010                |
+| ADD       | B,A       | 0000000000000000 | 0000000000100000 | 0010                |
+| ADD       | A,Lit     | Lit              | 0000000001010000 | 0010                |
+| ADD       | B,Lit     | Lit              | 0000000000110000 | 0010                |
+| ADD       | A,(Dir)   | Dir              | 0000000001011000 | 0010                |
+| ADD       | B,(Dir)   | Dir              | 0000000000111000 | 0010                |
+| ADD       | (Dir)     | Dir              | 0000000000000000 | 0010                |
+| ADD       | A,(B)     | 0000000000000000 | 0000000011011000 | 0010                |
+| ADD       | B,(B)     | 0000000000000000 | 0000000010111000 | 0010                |
+| SUB       | A,B       | 0000000000000000 | 0000000001000001 | 0010                |
+| SUB       | B,A       | 0000000000000000 | 0000000000100001 | 0010                |
+| SUB       | A,Lit     | Lit              | 0000000001010001 | 0010                |
+| SUB       | B,Lit     | Lit              | 0000000000110001 | 0010                |
+| SUB       | A,(Dir)   | Dir              | 0000000001011001 | 0010                |
+| SUB       | B,(Dir)   | Dir              | 0000000000111001 | 0010                |
+| SUB       | (Dir)     | Dir              | 0000000000000001 | 0010                |
+| SUB       | A,(B)     | 0000000000000000 | 0000000011011001 | 0010                |
+| SUB       | B,(B)     | 0000000000000000 | 0000000010111001 | 0010                |
+| AND       | A,B       | 0000000000000000 | 0000000001000010 | 0010                |
+| AND       | B,A       | 0000000000000000 | 0000000000100010 | 0010                |
+| AND       | A,Lit     | Lit              | 0000000001010010 | 0010                |
+| AND       | B,Lit     | Lit              | 0000000000110010 | 0010                |
+| AND       | A,(Dir)   | Dir              | 0000000001011010 | 0010                |
+| AND       | B,(Dir)   | Dir              | 0000000000111010 | 0010                |
+| AND       | (Dir)     | Dir              | 0000000000000010 | 0010                |
+| AND       | A,(B)     | 0000000000000000 | 0000000011011010 | 0010                |
+| AND       | B,(B)     | 0000000000000000 | 0000000010111010 | 0010                |
+| OR        | A,B       | 0000000000000000 | 0000000001000011 | 0010                |
+| OR        | B,A       | 0000000000000000 | 0000000000100011 | 0010                |
+| OR        | A,Lit     | Lit              | 0000000001010011 | 0010                |
+| OR        | B,Lit     | Lit              | 0000000000110011 | 0010                |
+| OR        | A,(Dir)   | Dir              | 0000000001011011 | 0010                |
+| OR        | B,(Dir)   | Dir              | 0000000000111011 | 0010                |
+| OR        | (Dir)     | Dir              | 0000000000000011 | 0010                |
+| OR        | A,(B)     | 0000000000000000 | 0000000011011011 | 0010                |
+| OR        | B,(B)     | 0000000000000000 | 0000000010111011 | 0010                |
+| XOR       | A,B       | 0000000000000000 | 0000000001000101 | 0010                |
+| XOR       | B,A       | 0000000000000000 | 0000000000100101 | 0010                |
+| XOR       | A,Lit     | Lit              | 0000000001010101 | 0010                |
+| XOR       | B,Lit     | Lit              | 0000000000110101 | 0010                |
+| XOR       | A,(Dir)   | Dir              | 0000000001011101 | 0010                |
+| XOR       | B,(Dir)   | Dir              | 0000000000111101 | 0010                |
+| XOR       | (Dir)     | Dir              | 0000000000000101 | 0010                |
+| XOR       | A,(B)     | 0000000000000000 | 0000000011011101 | 0010                |
+| XOR       | B,(B)     | 0000000000000000 | 0000000010111101 | 0010                |
+| NOT       | A         | 0000000000000000 | 0000000000001000 | 0011                |
+| NOT       | B,A       | 0000000000000000 | 0000000000000100 | 0011                |
+| NOT       | (Dir),A   | Dir              | 0000000000000000 | 0011                |
+| NOT       | (B),A     | 0000000000000000 | 0000000000010000 | 0011                |
+| SHL       | A         | 0000000000000000 | 0000000000001010 | 0011                |
+| SHL       | B,A       | 0000000000000000 | 0000000000000110 | 0011                |
+| SHL       | (Dir),A   | Dir              | 0000000000000010 | 0011                |
+| SHL       | (B),A     | 0000000000000000 | 0000000000010010 | 0011                |
+| SHR       | A         | 0000000000000000 | 0000000000001011 | 0011                |
+| SHR       | B,A       | 0000000000000000 | 0000000000000111 | 0011                |
+| SHR       | (Dir),A   | Dir              | 0000000000000011 | 0011                |
+| SHR       | (B),A     | 0000000000000000 | 0000000000010011 | 0011                |
+| INC       | A         | 0000000000000001 | 0000000000000100 | 0100                |
+| INC       | B         | 0000000000000001 | 0000000000000000 | 0100                |
+| INC       | (Dir)     | Dir              | 0000000000000110 | 0100                |
+| INC       | (B)       | 0000000000000001 | 0000000000001110 | 0100                |
+| DEC       | A         | 0000000000000001 | 0000000000000101 | 0100                |
+| CMP       | A,B       | 0000000000000000 | 0000000000000000 | 0101                |
+| CMP       | A,Lit     | Lit              | 0000000000000010 | 0101                |
+| CMP       | A,(Dir)   | Dir              | 0000000000000011 | 0101                |
+| CMP       | A,(B)     | 0000000000000000 | 0000000000000111 | 0101                |
+| JMP       | Ins       | Ins              | 0000000000000000 | 0110                |
+| JEQ       | Ins       | Ins              | 0000000000001001 | 0110                |
+| JNE       | Ins       | Ins              | 0000000000000001 | 0110                |
+| JGT       | Ins       | Ins              | 0000000000000011 | 0110                |
+| JGE       | Ins       | Ins              | 0000000000000010 | 0110                |
+| JLT       | Ins       | Ins              | 0000000000001010 | 0110                |
+| JLE       | Ins       | Ins              | 0000000000001011 | 0110                |
+| JCR       | Ins       | Ins              | 0000000000001100 | 0110                |
+| NOP       | -         | 0000000000000000 | 0000000000000000 | 0000                |
+
+# Anexo - Entregas Pasadas
+
+# Entrega 2
 
 # Distribución del Trabajo
 
@@ -384,73 +544,3 @@ def multiplicar(a,b):
         a -= 1
     return resultado
  ```
-
-# Instrucciones Soportadas
-
-El computador creado soporta TODAS las instrucciones pedidas para la entrega. La tabla con dichas instrucciones y sus palabras de control se muestra a continuación:
-
-| Operación | Operandos | Literal          | Zona de Señales  | Zona de Operaciones |
-|-----------|-----------|------------------|------------------|---------------------|
-| MOV       | A,B       | 0000000000000000 | 0000000000100100 | 0001                |
-| MOV       | B,A       | 0000000000000000 | 0000000000010001 | 0001                |
-| MOV       | A,Lit     | Lit              | 0000000000100110 | 0001                |
-| MOV       | B,Lit     | Lit              | 0000000000010110 | 0001                |
-| MOV       | A,(Dir)   | Dir              | 0000000000100111 | 0001                |
-| MOV       | B,(Dir)   | Dir              | 0000000000010111 | 0001                |
-| MOV       | (Dir),A   | Dir              | 0000000000000001 | 0001                |
-| MOV       | (Dir),B   | Dir              | 0000000000000100 | 0001                |
-| ADD       | A,B       | 0000000000000000 | 0000000001000000 | 0010                |
-| ADD       | B,A       | 0000000000000000 | 0000000000100000 | 0010                |
-| ADD       | A,Lit     | Lit              | 0000000001010000 | 0010                |
-| ADD       | B,Lit     | Lit              | 0000000000110000 | 0010                |
-| ADD       | A,(Dir)   | Dir              | 0000000001011000 | 0010                |
-| ADD       | B,(Dir)   | Dir              | 0000000000111000 | 0010                |
-| ADD       | (Dir)     | Dir              | 0000000000000000 | 0010                |
-| SUB       | A,B       | 0000000000000000 | 0000000001000001 | 0010                |
-| SUB       | B,A       | 0000000000000000 | 0000000000100001 | 0010                |
-| SUB       | A,Lit     | Lit              | 0000000001010001 | 0010                |
-| SUB       | B,Lit     | Lit              | 0000000000110001 | 0010                |
-| SUB       | A,(Dir)   | Dir              | 0000000001011001 | 0010                |
-| SUB       | B,(Dir)   | Dir              | 0000000000111001 | 0010                |
-| SUB       | (Dir)     | Dir              | 0000000000000001 | 0010                |
-| AND       | A,B       | 0000000000000000 | 0000000001000010 | 0010                |
-| AND       | B,A       | 0000000000000000 | 0000000000100010 | 0010                |
-| AND       | A,Lit     | Lit              | 0000000001010010 | 0010                |
-| AND       | B,Lit     | Lit              | 0000000000110010 | 0010                |
-| AND       | A,(Dir)   | Dir              | 0000000001011010 | 0010                |
-| AND       | B,(Dir)   | Dir              | 0000000000111010 | 0010                |
-| AND       | (Dir)     | Dir              | 0000000000000010 | 0010                |
-| OR        | A,B       | 0000000000000000 | 0000000001000011 | 0010                |
-| OR        | B,A       | 0000000000000000 | 0000000000100011 | 0010                |
-| OR        | A,Lit     | Lit              | 0000000001010011 | 0010                |
-| OR        | B,Lit     | Lit              | 0000000000110011 | 0010                |
-| OR        | A,(Dir)   | Dir              | 0000000001011011 | 0010                |
-| OR        | B,(Dir)   | Dir              | 0000000000111011 | 0010                |
-| OR        | (Dir)     | Dir              | 0000000000000011 | 0010                |
-| XOR       | A,B       | 0000000000000000 | 0000000001000101 | 0010                |
-| XOR       | B,A       | 0000000000000000 | 0000000000100101 | 0010                |
-| XOR       | A,Lit     | Lit              | 0000000001010101 | 0010                |
-| XOR       | B,Lit     | Lit              | 0000000000110101 | 0010                |
-| XOR       | A,(Dir)   | Dir              | 0000000001011101 | 0010                |
-| XOR       | B,(Dir)   | Dir              | 0000000000111101 | 0010                |
-| XOR       | (Dir)     | Dir              | 0000000000000101 | 0010                |
-| NOT       | A         | 0000000000000000 | 0000000000001000 | 0011                |
-| NOT       | B,A       | 0000000000000000 | 0000000000000100 | 0011                |
-| NOT       | (Dir),A   | Dir              | 0000000000000000 | 0011                |
-| SHL       | A         | 0000000000000000 | 0000000000001010 | 0011                |
-| SHL       | B,A       | 0000000000000000 | 0000000000000110 | 0011                |
-| SHL       | (Dir),A   | Dir              | 0000000000000010 | 0011                |
-| SHR       | A         | 0000000000000000 | 0000000000001011 | 0011                |
-| SHR       | B,A       | 0000000000000000 | 0000000000000111 | 0011                |
-| SHR       | (Dir),A   | Dir              | 0000000000000011 | 0011                |
-| INC       | A         | 0000000000000001 | 0000000000000100 | 0100                |
-| INC       | B         | 0000000000000001 | 0000000000000000 | 0100                |
-| INC       | (Dir)     | Dir              | 0000000000000110 | 0100                |
-| DEC       | A         | 0000000000000001 | 0000000000000101 | 0100                |
-| CMP       | A,B       | 0000000000000000 | 0000000000000000 | 0101                |
-| CMP       | A,Lit     | Lit              | 0000000000000010 | 0101                |
-| CMP       | A,(Dir)   | Dir              | 0000000000000011 | 0101                |
-| JMP       | Ins       | Ins              | 0000000000000000 | 0110                |
-| JEQ       | Ins       | Ins              | 0000000000001001 | 0110                |
-| JNE       | Ins       | Ins              | 0000000000000001 | 0110                |
-| NOP       | -         | 0000000000000000 | 0000000000000000 | 0000                |

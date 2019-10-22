@@ -1,4 +1,4 @@
-﻿# Entrega 2, Grupo 3 :computer:
+﻿# Entrega 3, Grupo 3 :computer:
 
 ## Integrantes
 
