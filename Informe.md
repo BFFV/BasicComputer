@@ -106,6 +106,24 @@ Arquitectura:
     - AND/OR/NOT/XOR: Toma valor 0.
     - SHL/SHR: Corresponde al valor del bit más significativo y menos significativo del vector de entrada, respectivamente.
 
+### Adder:
+
+Señales de Entrada:
+
+- A: Valor 1 (en 16 bits).
+
+- regB: Valor actual del Program Counter (en 16 bits).
+
+- carryIn: Valor 0.
+
+Señales de Salida:
+
+- result: Valor de retorno del Program Counter al ejecutar el próximo RET (16 bits).
+
+- carryOut: Carry resultante de la operación.
+
+Arquitectura: El Adder es el mismo componente utilizado dentro de la ALU para las operaciones de suma y resta, ocupado en este caso para incrementar en 1 el valor de salida del PC y así guardar en la RAM la línea de retorno de las subrutinas.
+
 ### Multiplexor A: 
 
 Señales de Entrada:
@@ -138,6 +156,56 @@ Señales de Salida:
 
 Arquitectura: El multiplexor B se compone de señales de control, según las que se definen los valores a entregar en la salida (utilizando with select). Según la combinación que entregue selB puede retornar en dataOut los valores B, "0000000000000000", un dato proveniente de la RAM y un Literal proveniente de la ROM.
 
+### Multiplexor DataIn:
+
+Señales de Entrada:
+
+- result: Resultado de la ALU.
+
+- subAdd: Valor de salida del Adder (línea de retorno de las subrutinas).
+
+- selDIn: Señal de control que selecciona la salida del Multiplexor DataIn (revisar sección Unidad de Control).
+
+Señales de Salida:
+
+- ramIn: Valor de entrada a la memoria RAM (16 bits).
+
+Arquitectura: El multiplexor DataIn se compone de la señal de control selDIn, según la que se definen los valores a entregar en la salida (utilizando with select). Según el valor de selDIn puede retornar en ramIn los valores result y subAdd.
+
+### Multiplexor PC:
+
+Señales de Entrada:
+
+- romOut: Valor del literal de la instrucción actual (12 bits menos significativos del literal).
+
+- memOut: Valor de salida de la memoria RAM (12 bits menos significativos).
+
+- selPC: Señal de control que selecciona la salida del Multiplexor PC (revisar sección Unidad de Control).
+
+Señales de Salida:
+
+- pcIn: Valor de entrada al Program Counter (12 bits).
+
+Arquitectura: El multiplexor PC se compone de la señal de control selPC, según la que se definen los valores a entregar en la salida (utilizando with select). Según el valor de selPC puede retornar en pcIn los valores romOut (12 bits menos significativos del literal) y memOut (12 bits menos significativos).
+
+### Multiplexor Address:
+
+Señales de Entrada:
+
+- romOut: Valor del literal de la instrucción actual (12 bits menos significativos del literal).
+
+- valB: Valor del registro B (12 bits menos significativos).
+
+- spOut: Valor del Stack Pointer.
+
+- selAdd: Señales de control que seleccionan la salida del Multiplexor Address (revisar sección Unidad de Control).
+
+Señales de Salida:
+
+- ramAdd: Valor de la dirección de la memoria RAM (12 bits).
+
+Arquitectura: El multiplexor Address se compone de señales de control, según las que se definen los valores a entregar en la salida (utilizando with select). Según la combinación que entregue selAdd puede retornar en ramAdd los valores romOut (12 bits menos significativos del literal), valB (12 bits menos significativos) y spOut.
+
 ### Registro A: 
 
 Señales de Entrada:
@@ -154,7 +222,7 @@ Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
 
-- valueA: Valor de salida del Registro A, conectado directamente al Display.
+- valA: Valor de salida del Registro A, conectado directamente al Display.
 
 Arquitectura: El módulo Registro A está compuesto por el Registro A y Multiplexor A, razón por la que recibe las señales de entrada de ambos componentes. Se encarga de almacenar valores en el Registro A (según la señal loadA y sólo en Flanco de Subida del Clock) y de entregar en la salida lo que se le indique con la señal selA.
 
@@ -178,7 +246,7 @@ Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
 
-- valueB: Valor de salida del Registro B, conectado directamente al Display. También se conecta al Multiplexor Address para realizar direccionamiento indirecto.
+- valB: Valor de salida del Registro B, conectado directamente al Display. También se conecta al Multiplexor Address para realizar direccionamiento indirecto.
 
 Arquitectura: El módulo Registro B está compuesto por el Registro B y Multiplexor B, razón por la que recibe las señales de entrada de ambos componentes. Se encarga de almacenar valores en el Registro B (según la señal loadB y sólo en Flanco de Subida del Clock) y de entregar en la salida lo que se le indique con la señal selB.
 
@@ -190,13 +258,13 @@ Señales de Entrada:
 
 - loadPC: Señal de control que habilita la carga de datos en el PC. Si toma valor 1 permite la carga.
 
-- countIn: Valor del literal proveniente de las instrucciones de la ROM (sólo sus 12 bits menos significativos).
+- countIn: Valor de salida del Multiplexor PC.
 
 Señales de Salida:
 
-- countOut: Valor de entrada a la ROM (dirección de 12 bits).
+- countOut: Valor de entrada a la ROM (dirección de 12 bits). También se utiliza como el valor de entrada del Adder para poder utilizar subrutinas.
 
-Arquitectura: Se utilizó un Program Counter de 12 bits de direccionamiento de la ROM, que incrementa en 1 el número almacenado en caso de que la señal loadPC sea 0. Si la señal loadPC es 1, se carga un nuevo número al contador (utilizado para Saltos). Se siguió la plantilla asignando los inputs y outputs correspondientes, aprovechando además la señal Up del Registro entregado para simular la modalidad de contador ascendente.
+Arquitectura: Se utilizó un Program Counter de 12 bits de direccionamiento de la ROM, que incrementa en 1 el número almacenado en caso de que la señal loadPC sea 0. Si la señal loadPC es 1, se carga un nuevo número al contador (utilizado para Saltos y Retornos). Se siguió la plantilla asignando los inputs y outputs correspondientes, aprovechando además la señal Up del Registro entregado para simular la modalidad de contador ascendente.
 
 ### Registro de Status:
 
@@ -212,6 +280,8 @@ Señales de Salida:
 
 Arquitectura: Se creó la señal "regVal". Si el Clock está en flanco de subida, se actualiza esta señal con el valor de entrada "status". El valor de salida es el de la señal regVal, que se conecta con la Unidad de Control para permitir el uso de Saltos Condicionales.
 
+### Stack Pointer (SP):
+
 ### Componentes Entregados
 
 Se utilizaron los siguientes componentes entregados en el repositorio para facilitar el desarrollo de la entrega:
@@ -220,7 +290,7 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - RAM: Actúa como la memoria de Datos del computador.
 
-- Reg: Registro multipropósito utilizado en los Registros A, B y PC.
+- Reg: Registro multipropósito utilizado en los Registros A, B, PC y SP.
 
 - Display_Controller: Controlador del Display, conectado con la salida de los Registros A y B para mostrar sus bytes menos significativos en valor Hexadecimal.
 
@@ -365,6 +435,8 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 - La señal incSP se obtiene aplicando (loadA OR loadB) NOR loadPC, selPC toma valor 1, selA toma valor '01', selB toma valor '11' y selAdd toma valor '10'. Las demás señales de control valen 0.
 
 - Las operaciones de este grupo ocurren en 2 ciclos del clock, por lo que cada una está compuesta por 2 instrucciones consecutivas.
+
+# Assembler
 
 # Distribución del Trabajo
 
