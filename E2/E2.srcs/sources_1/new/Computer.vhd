@@ -109,6 +109,14 @@ component Clock_Divider is
           clock : out STD_LOGIC);
 end component;
 
+component fulladder is
+    Port (A : in STD_LOGIC_VECTOR (15 downto 0);
+          regB : in STD_LOGIC_VECTOR (15 downto 0);
+          carryIn : in STD_LOGIC;
+          result : out STD_LOGIC_VECTOR (15 downto 0);
+          carryOut : out STD_LOGIC);
+end component;
+
 signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                      --- Control Instruction From ROM ---
 signal swIns : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                    --- Control Instruction From Switches (Testing) ---
 signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                                     --- Status Codes ---
@@ -129,6 +137,13 @@ signal opB : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";              
 signal valA : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                         --- A Register Value ---
 signal valB : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                         --- B Register Value ---
 signal romAdd : STD_LOGIC_VECTOR (11 downto 0) := "000000000000";                           --- ROM Address ---
+signal romSub : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- ROM Subroutine Address ---
+signal subAdd : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                       --- ROM Subroutine Return Address ---
+signal subCarry : STD_LOGIC := '0';                                                         --- ROM Subroutine Address Carry ---
+signal ramIn : STD_LOGIC_VECTOR (15 downto 0) := "0000000000000000";                        --- RAM Data In ---
+signal pcIn : STD_LOGIC_VECTOR (11 downto 0) := "000000000000";                             --- PC Input ---
+signal ramAdd : STD_LOGIC_VECTOR (11 downto 0) := "000000000000";                           --- RAM Address ---
+signal spOut : STD_LOGIC_VECTOR (11 downto 0) := "000000000000";                            --- SP Data Out ---
 
 begin
 
@@ -263,8 +278,10 @@ B: RegB port map(
 Counter: PC port map(
     loadPC => control(4),
     clock => compClk,
-    countIn => romOut(31 downto 20),
+    countIn => pcIn,
     countOut => romAdd);
+
+romSub(11 downto 0) <= romAdd;
 
 ------------------------ Display ------------------------
 
@@ -277,4 +294,38 @@ Display: Display_Controller port map(
     seg => seg,
     an => an);
 
+------------------------ Adder ------------------------
+
+Adder: fulladder port map(
+    A => "0000000000000001",
+    regB => romSub,
+    carryIn => '0',
+    result => subAdd,
+    carryOut => subCarry);
+
+------------------------ Mux DataIn ------------------------   
+
+with control(16) select
+    ramIn <= result when '0',
+             subAdd when '1';
+
+------------------------ Mux PC ------------------------   
+
+with control(15) select
+    pcIn <= romOut(31 downto 20) when '0',
+            memOut(11 downto 0) when '1';
+
+------------------------ Mux Address ------------------------   
+
+with control(12 downto 11) select
+    ramAdd <= romOut(31 downto 20) when "00",
+              valB(11 downto 0) when "01",
+              spOut when "10",
+              "000000000000" when others;
+ 
+------------------------ Stack Pointer ------------------------
+ 
+ -- up/down: control(13)/control(14)
+ -- output: spOut
+ 
 end Behavioral;
