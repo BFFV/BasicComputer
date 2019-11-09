@@ -15,10 +15,10 @@ def parse_args(op, op_args, variables_data):
         elif op_args == 'B,A':  # B,A
             return I[op]['variants']['ba']['lit'] + \
                    I[op]['variants']['ba']['signal'] + I[op]['operation_code']
-        elif op_args == 'A,(B)':  # B,A
+        elif op_args == 'A,(B)':  # A,(B)
             return I[op]['variants']['adb']['lit'] + \
                    I[op]['variants']['adb']['signal'] + I[op]['operation_code']
-        elif op_args == 'B,(B)':  # B,A
+        elif op_args == 'B,(B)':  # B,(B)
             return I[op]['variants']['bdb']['lit'] + \
                    I[op]['variants']['bdb']['signal'] + I[op]['operation_code']
         args = op_args.split(',')

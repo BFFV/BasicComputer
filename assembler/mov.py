@@ -14,7 +14,7 @@ def parse_args(mov_args, variables_data):
     if mov_args == 'A,B':  # MOV A,B
         return MOV_DICT['variants']['ab']['lit'] + \
                MOV_DICT['variants']['ab']['signal'] + MOV_DICT['operation_code']
-    elif mov_args == 'B,A':  # MOV,B,A
+    elif mov_args == 'B,A':  # MOV B,A
         return MOV_DICT['variants']['ba']['lit'] + \
                MOV_DICT['variants']['ba']['signal'] + MOV_DICT['operation_code']
     elif mov_args == 'A,(B)':  # MOV A,(B)
