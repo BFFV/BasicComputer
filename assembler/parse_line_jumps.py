@@ -9,7 +9,7 @@ def get_line_jumps_info(path, variables_counter):
     for line in file_:
         if ":" in line and line != "DATA:" and line != "CODE:":
             jumps_data[line.split(":")[0]] = {"number_line": counter}
-        elif is_code and line:
+        elif is_code:
             counter += 1
             if ('POP' in line) or ('RET' in line):
                 counter += 1

@@ -1,4 +1,9 @@
+from errors import NotNegative
+
+
 def parser_number(number):
+    if '-' in number:
+        raise NotNegative
     if len(number) == 1 and number.isalpha():
         return 0
     if 'b' == number[-1]:

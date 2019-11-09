@@ -24,8 +24,6 @@ def parse_inc(op_args, variables_data):
                I['INC']['variants']['b']['signal'] + I['INC']['operation_code']
     if '(' in op_args:  # (dir)
         memory_dir = op_args.strip('(').strip(')')
-        lit = to_binary(memory_dir, 16) \
-            if memory_dir not in variables_data \
-            else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+        lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
         return lit + I['INC']['variants']['d']['signal'] + \
             I['INC']['operation_code']
