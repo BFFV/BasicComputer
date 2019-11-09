@@ -25,15 +25,15 @@ res3 0
 CODE:
 
     MOV A,(largo)
-    MOV          B,                                 0         //Con esto // Se llevaran los contadores
+    MOV          B,                                 arreglo         //Con esto // Se llevaran los contadores
+    MOV A,-1
     CALL loop
-    MOV A,(resultado)
 MOV (res1),A  // Se guarda el resultado
 MOV   A , (largo)
-MOV B,   0
+MOV B,   arreglo
     CALL MULTIPLICALOOP   // Multiplica todos los elementos del array
 MOV   A , (largo)
-MOV B,   0
+MOV B,   arreglo
 CALL loop  // Se vuelve a sumar
 MOV (res2),A
 SHR A

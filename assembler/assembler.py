@@ -2,6 +2,7 @@ from parse_variables import get_variables_instructions
 from parse_line_jumps import get_line_jumps_info
 from parser_file import parse
 from read_asm import read_assembly
+from errors import NotNegative
 import sys
 
 
@@ -15,9 +16,15 @@ def parse_file(path):
         for j in data_variables[i]['instructions']:
             instr.append((parse(j, data_variables, jumps_dir),
                           f'{i} = {data_variables[i]["value"]}'))
+    counter = 1
     for i in read_assembly(path):
         if founded and ':' not in i:
-            instr.append((parse(i, data_variables, jumps_dir), i))
+            try:
+                instr.append((parse(i, data_variables, jumps_dir), i))
+                counter += 1
+            except NotNegative:
+                print(f'Error en CODE: Instruccion nrmo {counter} : {i} => No se permiten numeros negativos')
+                exit()
         elif i == 'CODE:':
             founded = True
     return instr

@@ -34,7 +34,7 @@ def parse_args(mov_args, variables_data):
         if '(' not in args[1]:  # MOV A,lit
             try:  # A,lit
                 lit = to_binary(args[1], 16)
-            except:  # A, dir
+            except ValueError:  # A, dir
                 memory_dir = args[1].strip('(').strip(')')
                 lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
             return lit + MOV_DICT['variants']['al']['signal'] + \
@@ -48,7 +48,7 @@ def parse_args(mov_args, variables_data):
         if '(' not in args[1] and '(' not in args[0]:  # MOV B,lit
             try:  # B,lit
                 lit = to_binary(args[1], 16)
-            except:  # B, dir
+            except ValueError:  # B, dir
                 memory_dir = args[1].strip('(').strip(')')
                 lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
             return lit + MOV_DICT['variants']['bl']['signal'] + \

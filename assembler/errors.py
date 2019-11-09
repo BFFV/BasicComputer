@@ -1,0 +1,2 @@
+class NotNegative(Exception):
+    pass

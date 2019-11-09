@@ -26,7 +26,7 @@ def parse_args(op, op_args, variables_data):
             if '(' not in args[1]: 
                 try:  # A,lit
                     lit = to_binary(args[1], 16)
-                except:  # A, dir
+                except ValueError:  # A, dir
                     memory_dir = args[1].strip('(').strip(')')
                     lit = to_binary(variables_data[memory_dir]['dir_memory'],
                                     16)
@@ -43,7 +43,7 @@ def parse_args(op, op_args, variables_data):
             if '(' not in args[1]:  # B,lit
                 try:  # B,lit
                     lit = to_binary(args[1], 16)
-                except:  # B, dir
+                except ValueError:  # B, dir
                     memory_dir = args[1].strip('(').strip(')')
                     lit = to_binary(variables_data[memory_dir]['dir_memory'],
                                     16)
