@@ -35,5 +35,6 @@ def parse_push(op, op_args):
 
 def parse_ret(op):
     return (I[op]['variants']['1']['lit'] + I[op]['variants']['1']['signal'] +
-            I[op]['operation_code'] + '\",\n' + '       \"' + I[op]['variants']['2']['lit'] +
-            I[op]['variants']['2']['signal'] + I[op]['operation_code'])
+            I[op]['operation_code'] + '\",\n' + '       \"' +
+            I[op]['variants']['2']['lit'] + I[op]['variants']['2']['signal'] +
+            I[op]['operation_code'])

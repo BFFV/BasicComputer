@@ -1,5 +1,6 @@
 from errors import NotNegative
 
+
 def parser_number(number):
     if '-' in number:
         raise NotNegative

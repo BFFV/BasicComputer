@@ -24,7 +24,8 @@ def get_variables_instructions(VARIABLES_DATA, counter, direccion="test.asm"):
                     "dir_memory": counter, "value": value, "instructions":
                         [f'MOV B,{counter}', f'MOV (B),{value}']}
         except NotNegative:
-            print(f'Error en DATA:Instruccion nmro {counter + 1} : {i} =>  No se permiten numeros negativos')
+            print(f'Error en DATA: Instruccion numero {counter + 1}: {i} =>  '
+                  f'No se permiten numeros negativos!')
             exit()
 
         counter += 1

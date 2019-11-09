@@ -23,7 +23,8 @@ def parse_file(path):
                 instr.append((parse(i, data_variables, jumps_dir), i))
                 counter += 1
             except NotNegative:
-                print(f'Error en CODE: Instruccion nrmo {counter} : {i} => No se permiten numeros negativos')
+                print(f'Error en CODE: Instruccion numero {counter}: '
+                      f'{i} => No se permiten numeros negativos!')
                 exit()
         elif i == 'CODE:':
             founded = True
