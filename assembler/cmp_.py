@@ -14,7 +14,7 @@ def parse_args(op, op_args, variables_data):
                    I[op]['variants']['ab']['signal'] + I[op]['operation_code']
         args = op_args.split(',')
         if '(' not in op_args:    
-            if args[0] == 'A':  # A,LIT
+            if args[0] == 'A':  # A,Lit
                 lit = parse_lit(args[1], variables_data)
                 return lit + I[op]['variants']['al']['signal'] + \
                     I[op]['operation_code']
@@ -26,3 +26,4 @@ def parse_args(op, op_args, variables_data):
                     else to_binary(variables_data[memory_dir]['dir_memory'], 16)
                 return lit + I[op]['variants']['ad']['signal'] + \
                     I[op]['operation_code']
+            # Agregar aquí el A,(B)

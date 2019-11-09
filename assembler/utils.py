@@ -23,11 +23,9 @@ def to_binary(n, bits):
     return ("{0:0>%s}" % bits).format(s)
 
 
-
 def parse_lit(literal, variables_data):
     try: 
         lit = to_binary(literal, 16)
     except ValueError:
-        lit = to_binary(variables_data[literal]['dir_memory'],
-                                    16)
+        lit = to_binary(variables_data[literal]['dir_memory'], 16)
     return lit

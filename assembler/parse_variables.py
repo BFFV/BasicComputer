@@ -27,6 +27,5 @@ def get_variables_instructions(VARIABLES_DATA, counter, direccion="test.asm"):
             print(f'Error en DATA: Instruccion numero {counter + 1}: {i} =>  '
                   f'No se permiten numeros negativos!')
             exit()
-
         counter += 1
     return VARIABLES_DATA

@@ -22,7 +22,7 @@ def parse_inc(op_args, variables_data):
     if op_args == 'B':  # B
         return I['INC']['variants']['b']['lit'] + \
                I['INC']['variants']['b']['signal'] + I['INC']['operation_code']
-    if op_args == '(B)': # (B)
+    if op_args == '(B)':  # (B)
         return I['INC']['variants']['db']['lit'] + \
                I['INC']['variants']['db']['signal'] + I['INC']['operation_code']
     if '(' in op_args:  # (dir)
