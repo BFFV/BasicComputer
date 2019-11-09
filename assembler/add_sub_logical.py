@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary
+from utils import to_binary, parse_lit
 
 
 def parse_add_sub_logical(instruction, variables_data):
@@ -23,42 +23,26 @@ def parse_args(op, op_args, variables_data):
                    I[op]['variants']['bdb']['signal'] + I[op]['operation_code']
         args = op_args.split(',')
         if args[0] == 'A': 
-            if '(' not in args[1]: 
-                try:  # A,lit
-                    lit = to_binary(args[1], 16)
-                except ValueError:  # A, dir
-                    memory_dir = args[1].strip('(').strip(')')
-                    lit = to_binary(variables_data[memory_dir]['dir_memory'],
-                                    16)
+            if '(' not in args[1]:
+                lit = parse_lit(args[1], variables_data) 
                 return lit + I[op]['variants']['al']['signal'] + \
                     I[op]['operation_code']
             else:  # A,(dir)
                 memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(memory_dir, 16) \
-                    if memory_dir not in variables_data \
-                    else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
                 return lit + I[op]['variants']['ad']['signal'] + \
                     I[op]['operation_code']
         if args[0] == 'B': 
             if '(' not in args[1]:  # B,lit
-                try:  # B,lit
-                    lit = to_binary(args[1], 16)
-                except ValueError:  # B, dir
-                    memory_dir = args[1].strip('(').strip(')')
-                    lit = to_binary(variables_data[memory_dir]['dir_memory'],
-                                    16)
+                lit = parse_lit(args[1], variables_data)
                 return lit + I[op]['variants']['ab']['signal'] + \
                     I[op]['operation_code']
             else:  # B, (dir)
                 memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(memory_dir, 16) \
-                    if memory_dir not in variables_data \
-                    else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
                 return lit + I[op]['variants']['bd']['signal'] + \
                     I[op]['operation_code']
     elif '(' in op_args:
         memory_dir = op_args.strip('(').strip(')')
-        lit = to_binary(memory_dir, 16) \
-            if memory_dir not in variables_data \
-            else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+        lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
         return lit + I[op]['variants']['d']['signal'] + I[op]['operation_code']
