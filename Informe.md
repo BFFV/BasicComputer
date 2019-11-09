@@ -438,6 +438,39 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 # Assembler
 
+Para ejecutar el parser se debe tener python3.6 o 3.7 instalado, en la carpeta assembler se debe ejecutar el siguente comando en la terminal
+
+```
+$ python3 assembler.py archivo.asm
+```
+
+Como resultado se creará en la misma carpeta el archivo ROM.vhd, que contiene las instrucciones parseadas a lenguaje de máquina del archivo que se ingresó.
+
+Los archivos usados para parsear las instrucciones son:
+
+- `add_sub_logical.py` => Se encarga del parseo de las operaciones ADD,SUB,AND,OR,XOR.
+- `cmp_.py` => Parsea la operación CMP.
+- `inc_dec.py` => Parsea las operaciones INC y DEC.
+- `jumps.py` => Se encarga de parsear los saltos JMP, JEQ, JNE, JGE, JGT, JLT, JLE, JCR además parsea el CALL.
+- `mov.py` => Parsea la operación MOV.
+- `nop.py` => Parsea la operación NOP.
+- `push_pop_ret.py` => Parsea las operaciones PUSH, POP y RET.
+- `shifts_not.py` => Parsea las operaciones SHIFT y NOT.
+- `parse.py` => Un módulo que usando todos los módulos anteriores parsea una instrucción cualquiera de las soportadas para esta entrega.
+
+En tanto los archivos que se encargan de leer el archivo a parsear son:
+
+- `read_asm.py` => Lee el archivo a parsear y le quita comentarios, espacios, lineas en blanco, tabulaciones, etc. Es decir deja al archivo en la forma estándar (OPERACION VARIABLE1,VARIABLE2)
+- `parse_variables` => Se encarga de leer la sección DATA (una vez el archivo ya fue procesado por el módulo anterior) y cada asignación de variables a literal las deja de la forma MOV B,CONTADOR_DE_MEMORIA  - MOV (B), literal. También deja de esta forma a los arreglos.
+- `parse_jumps` => Se encarga de registrar las líneas de jumps en el archivo tomando en cuenta que hay instrucciones que en el archivo final contarán como dos (como por ejemplo los PUSH o RET)-
+- `assembly.py` => Lee el archivo completo y se encarga de dejarlo completamente en lenguaje de máquina, además de escribir en el archivo final.
+
+Finalmente los siguientes dos módulos son usados por varios más:
+
+- `utils.py` => Contiene funciones que son usadas por los demás módulos sin alguna funcionalidad relacionada directamente con el parser (convertir un número a binario por ejemplo, o a hexadecimal, etc).
+
+- `instructions.py` => Contiene un diccionario con las instrucciones de forma genérica y su versión en lenguaje de máquina, es decir MOV A,B => 000......01, MOV A,LIT => 0101.....01.
+
 # Distribución del Trabajo
 
 Lo más difícil fue
@@ -460,10 +493,9 @@ A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 
 
-## Juan A. Romero: 
+## Juan A. Romero:
 
-
-
+Participó en el parser, su función fue principalmente encargar de transformar la instrucción a binario, además de testar y unir las distintas partes del parser.
 
 # Instrucciones Soportadas
 
