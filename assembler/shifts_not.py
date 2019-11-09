@@ -19,9 +19,7 @@ def parse_args(op, op_args, variables_data):
             args = op_args.split(',')
             if args[1] == 'A':  # (dir), A
                 memory_dir = args[0].strip('(').strip(')')
-                lit = to_binary(memory_dir, 16) \
-                    if memory_dir not in variables_data \
-                    else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
                 return lit + I[op]['variants']['da']['signal'] + \
                     I[op]['operation_code']
     if op_args == 'A':  # A
