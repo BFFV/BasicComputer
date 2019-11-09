@@ -1,6 +1,7 @@
 from instructions import INSTRUCTIONS as I
 from utils import to_binary
 
+
 def parse_jumps(instruction, line_data):
     inst = instruction.split(' ')
     return parse_jump(inst[0], inst[1].strip(' '), line_data)   

@@ -11,7 +11,7 @@ from push_pop_ret import parse_push_pop_ret
 SHIFTS_NOT = {'SHR', 'SHL', 'NOT'}
 ADD_SUB_LOGICAL = {'ADD', 'SUB', 'AND', 'OR', 'XOR'}
 INC_DEC = {'INC', 'DEC'}
-JUMPS = {'CALL','JMP', 'JEQ', 'JNE', 'JGE', 'JGT', 'JLT', 'JLE', 'JCR'}
+JUMPS = {'CALL', 'JMP', 'JEQ', 'JNE', 'JGE', 'JGT', 'JLT', 'JLE', 'JCR'}
 PP = {'PUSH', 'POP', 'RET'}
 
 
