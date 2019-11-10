@@ -51,14 +51,18 @@ def write_file(instr, name):
         file.write(behavioral)
         file.write(array)
         total = (2 ** 12)
+        counter = 0
         for i in instr:
-            if (len(instr) >= total) and (i == instr[-1]):
+            if (counter >= total) and (i == instr[-1]):
                 file.write(f'       "{i[0]}"  -- {i[1]} \n')
             else:
                 file.write(f'       "{i[0]}", -- {i[1]} \n')
+                counter += 1
+                if len(i[0]) > 36:
+                    counter += 1
         empty = '0' * 36
-        for i in range(total - len(instr)):
-            if i == (total - len(instr) - 1):
+        for i in range(total - counter):
+            if i == (total - counter - 1):
                 file.write(f'       "{empty}"  -- empty\n')
             else:
                 file.write(f'       "{empty}", -- empty\n')
