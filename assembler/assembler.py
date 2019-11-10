@@ -40,9 +40,9 @@ def write_file(instr, name):
                 'std_logic_vector (11 downto 0);\n        dataout : out ' \
                 'std_logic_vector (35 downto 0)\n          );\nend ROM;\n\n'
     behavioral = 'architecture Behavioral of ROM is\n\ntype memory_array is ' \
-                 'array (0 to ((2 ∗∗ 12) − 1) ) of std_logic_vector ' \
+                 'array (0 to ((2 ** 12) - 1) ) of std_logic_vector ' \
                  '(35 downto 0);\n'
-    array = 'signal memory : memory_array:= (\n'
+    array = '\nsignal memory : memory_array:= (\n'
     end = '       );\nbegin\n\n    ' \
           'dataout <= memory(to_integer(unsigned(address)));\n\nend Behavioral;'
     with open(name + '.vhd', 'w', encoding='utf8') as file:
@@ -50,14 +50,18 @@ def write_file(instr, name):
         file.write(component)
         file.write(behavioral)
         file.write(array)
-        counter = 0
         total = (2 ** 12)
         for i in instr:
-            file.write(f'       "{i[0]}", -- {i[1]} \n')
-            counter += 1
+            if (len(instr) >= total) and (i == instr[-1]):
+                file.write(f'       "{i[0]}"  -- {i[1]} \n')
+            else:
+                file.write(f'       "{i[0]}", -- {i[1]} \n')
         empty = '0' * 36
-        for i in range(total - counter):
-            file.write(f'       "{empty}", -- empty\n')
+        for i in range(total - len(instr)):
+            if i == (total - len(instr) - 1):
+                file.write(f'       "{empty}"  -- empty\n')
+            else:
+                file.write(f'       "{empty}", -- empty\n')
         file.write(end)
 
 

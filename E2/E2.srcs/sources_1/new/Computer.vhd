@@ -117,6 +117,13 @@ component fulladder is
           carryOut : out STD_LOGIC);
 end component;
 
+component SP is
+    Port (inc : in STD_LOGIC;
+          dec : in STD_LOGIC;
+          clock : in STD_LOGIC;
+          dataOut : out STD_LOGIC_VECTOR (11 downto 0));
+end component;
+
 signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                      --- Control Instruction From ROM ---
 signal swIns : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                    --- Control Instruction From Switches (Testing) ---
 signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                                     --- Status Codes ---
@@ -242,7 +249,7 @@ IMem: ROM port map(
     address => romAdd,
     dataout => romOut);
     
-ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
+ins <= swIns(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
 
 ------------------------ Status Register ------------------------
 
@@ -324,8 +331,11 @@ with control(12 downto 11) select
               "000000000000" when others;
  
 ------------------------ Stack Pointer ------------------------
- 
- -- up/down: control(13)/control(14)
- -- output: spOut
+
+ StackPointer: SP port map(
+    inc => control(13),
+    dec => control(14),
+    clock => compClk,
+    dataOut => spOut);
  
 end Behavioral;
