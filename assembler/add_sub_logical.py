@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary, parse_lit, parse_dir
+from utils import parse_lit, parse_dir
 
 
 def parse_add_sub_logical(instruction, variables_data):
