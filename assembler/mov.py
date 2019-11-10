@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary, parse_lit, parse_dir
+from utils import parse_lit, parse_dir
 
 
 MOV_DICT = I['MOV']
@@ -11,7 +11,6 @@ def parse_mov(instruction, variables_data):
 
 
 def parse_args(mov_args, variables_data):
-    print(variables_data)
     if mov_args == 'A,B':  # MOV A,B
         return MOV_DICT['variants']['ab']['lit'] + \
                MOV_DICT['variants']['ab']['signal'] + MOV_DICT['operation_code']

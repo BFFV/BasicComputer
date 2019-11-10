@@ -17,7 +17,8 @@ def parse_file(path):
             instr.append((parse(j, dv, jumps_dir),
                           f'{i} = {dv[i]["value"]}'))
     counter = 1
-    data_variables = {i: dv[i] for i in filter(lambda x: not x.isdigit(),dv.keys())}
+    data_variables = {i: dv[i] for i in filter(
+        lambda x: not x.isdigit(), dv.keys())}
     for i in read_assembly(path):
         if founded and ':' not in i:
             try:

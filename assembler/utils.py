@@ -33,6 +33,8 @@ def parse_lit(literal, variables_data):
 
 def parse_dir(direction_memory, variables_data):
     memory_dir = direction_memory.strip('(').strip(')')
-    if memory_dir.isdigit():
-        return to_binary(memory_dir, 16)
-    return to_binary(variables_data[memory_dir]['dir_memory'], 16)
+    try:
+        direction = to_binary(memory_dir, 16)
+    except ValueError:
+        direction = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+    return direction
