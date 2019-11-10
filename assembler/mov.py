@@ -45,8 +45,7 @@ def parse_args(mov_args, variables_data):
             return lit + MOV_DICT['variants']['bl']['signal'] + \
                 MOV_DICT['operation_code']
         elif '(B)' not in args[0]:  # MOV B,(dir)
-            memory_dir = args[1].strip('(').strip(')')
-            lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_dir(args[1], variables_data)
             return lit + MOV_DICT['variants']['bd']['signal'] + \
                 MOV_DICT['operation_code']
         else:  # MOV (B), lit
