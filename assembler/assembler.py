@@ -7,16 +7,18 @@ import sys
 
 
 def parse_file(path):
-    data_variables = {}
-    get_variables_instructions(data_variables, 0, path)
-    jumps_dir = get_line_jumps_info(path, 2 * len(data_variables))
+    dv = {}
+    get_variables_instructions(dv, 0, path)
+    jumps_dir = get_line_jumps_info(path, 2 * len(dv))
     instr = []
     founded = False
-    for i in data_variables:
-        for j in data_variables[i]['instructions']:
-            instr.append((parse(j, data_variables, jumps_dir),
-                          f'{i} = {data_variables[i]["value"]}'))
+    for i in dv:
+        for j in dv[i]['instructions']:
+            instr.append((parse(j, dv, jumps_dir),
+                          f'{i} = {dv[i]["value"]}'))
     counter = 1
+    data_variables = {i: dv[i] for i in filter(
+        lambda x: not x.isdigit(), dv.keys())}
     for i in read_assembly(path):
         if founded and ':' not in i:
             try:

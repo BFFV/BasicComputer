@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary
+from utils import parse_dir
 
 
 def parse_inc_dec(instruction, variables_data):
@@ -22,8 +22,10 @@ def parse_inc(op_args, variables_data):
     if op_args == 'B':  # B
         return I['INC']['variants']['b']['lit'] + \
                I['INC']['variants']['b']['signal'] + I['INC']['operation_code']
+    if op_args == '(B)':  # (B)
+        return I['INC']['variants']['db']['lit'] + \
+               I['INC']['variants']['db']['signal'] + I['INC']['operation_code']
     if '(' in op_args:  # (dir)
-        memory_dir = op_args.strip('(').strip(')')
-        lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+        lit = parse_dir(op_args, variables_data)
         return lit + I['INC']['variants']['d']['signal'] + \
             I['INC']['operation_code']

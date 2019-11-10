@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary
+from utils import parse_lit, parse_dir
 
 
 MOV_DICT = I['MOV']
@@ -32,45 +32,33 @@ def parse_args(mov_args, variables_data):
     args = [i.strip(' ') for i in mov_args.split(',')]
     if args[0] == 'A':
         if '(' not in args[1]:  # MOV A,lit
-            try:  # A,lit
-                lit = to_binary(args[1], 16)
-            except ValueError:  # A, dir
-                memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_lit(args[1], variables_data)
             return lit + MOV_DICT['variants']['al']['signal'] + \
                 MOV_DICT['operation_code']
         else:  # MOV A,(dir)
-            memory_dir = args[1].strip('(').strip(')')
-            lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_dir(args[1], variables_data)
             return lit + MOV_DICT['variants']['ad']['signal'] + \
                 MOV_DICT['operation_code']
     if args[0] == 'B' or args[0] == '(B)': 
         if '(' not in args[1] and '(' not in args[0]:  # MOV B,lit
-            try:  # B,lit
-                lit = to_binary(args[1], 16)
-            except ValueError:  # B, dir
-                memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_lit(args[1], variables_data)
             return lit + MOV_DICT['variants']['bl']['signal'] + \
                 MOV_DICT['operation_code']
         elif '(B)' not in args[0]:  # MOV B,(dir)
-            memory_dir = args[1].strip('(').strip(')')
-            lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_dir(args[1], variables_data)
             return lit + MOV_DICT['variants']['bd']['signal'] + \
                 MOV_DICT['operation_code']
         else:  # MOV (B), lit
-            lit = to_binary(args[1], 16)
+            lit = parse_lit(args[1], variables_data)
             return lit + MOV_DICT['variants']['dbl']['signal'] + \
                 MOV_DICT['operation_code']
     if args[1] == 'A': 
         if '(' in args[0]:  # MOV (dir),A
-            memory_dir = args[0].strip('(').strip(')')
-            lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_dir(args[0], variables_data)
             return lit + MOV_DICT['variants']['da']['signal'] + \
                 MOV_DICT['operation_code']
     if args[1] == 'B': 
         if '(' in args[0]:  # MOV (dir),B
-            memory_dir = args[0].strip('(').strip(')')
-            lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+            lit = parse_dir(args[0], variables_data)
             return lit + MOV_DICT['variants']['db']['signal'] + \
                 MOV_DICT['operation_code']
