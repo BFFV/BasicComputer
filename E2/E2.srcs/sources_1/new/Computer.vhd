@@ -249,7 +249,7 @@ IMem: ROM port map(
     address => romAdd,
     dataout => romOut);
     
-ins <= swIns(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
+ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
 
 ------------------------ Status Register ------------------------
 
