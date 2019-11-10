@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary, parse_dir
+from utils import parse_dir
 
 
 def parse_inc_dec(instruction, variables_data):
