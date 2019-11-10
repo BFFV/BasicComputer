@@ -239,8 +239,8 @@ PU: ALU port map(
 DMem: RAM port map(
     clock => compClk,
     write => control(0),
-    address => romOut(31 downto 20),
-    datain => result,
+    address => ramAdd,
+    datain => ramIn,
     dataout => memOut);
 
 ------------------------ ROM ------------------------
