@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary, parse_lit
+from utils import to_binary, parse_lit, parse_dir
 
 
 def parse_cmp(instruction, variables_data):
@@ -23,9 +23,6 @@ def parse_args(op, op_args, variables_data):
                     I[op]['operation_code']
         elif '(' in op_args:
             if args[0] == 'A':  # A,(dir)
-                memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(memory_dir, 16) \
-                    if memory_dir not in variables_data \
-                    else to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = parse_dir(args[1], variables_data)
                 return lit + I[op]['variants']['ad']['signal'] + \
                     I[op]['operation_code']

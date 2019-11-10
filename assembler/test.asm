@@ -13,8 +13,12 @@ CODE:
  MOV        A,b     
  MOV        B,Ch     
  MOV        A,(a)   
- MOV        B,(b)   
- MOV        (b),A   
+ MOV        B,(b)
+ MOV A,(0)  
+ MOV B,(1) 
+ MOV        (b),A  
+ MOV (0),A
+ MOV (1),B 
  MOV        (a),B   
  MOV        A,(B)     
  MOV        B,(B)     
@@ -24,7 +28,10 @@ CODE:
  ADD        B,A       
  ADD        A,1000b     
  ADD        B,FFh     
- ADD        A,(c)   
+ ADD        A,(c)  
+ ADD A,(0)
+ ADD B,(0)
+ADD (1) 
  ADD        B,(d)   
  ADD        (e)     
  ADD        A,(B)     
@@ -72,20 +79,23 @@ CODE:
  SHL        A         
  SHL        B,A       
  SHL        (a),A   
- SHL        (B),A     
+ SHL        (B),A  
+ SHL (1),A   
  SHR        A         
  SHR        B,A       
  SHR        (c),A   
  SHR        (B),A     
  INC        A         
  INC        B         
- INC        (d)     
+ INC        (d)    
+ INC (1) 
  INC        (B)       
  DEC        A 
 		jump:        
  CMP        A,B       
  CMP        A,a     
- CMP        A,(a)   
+ CMP        A,(a)  
+ CMP A,(2) 
  CMP        A,(B)     
  JMP        jump       
  JEQ        jump       

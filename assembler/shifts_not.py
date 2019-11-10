@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary
+from utils import to_binary, parse_dir
 
 
 def parse_not_shifts(instruction, variables_data):
@@ -18,8 +18,7 @@ def parse_args(op, op_args, variables_data):
         elif '(' in op_args:
             args = op_args.split(',')
             if args[1] == 'A':  # (dir), A
-                memory_dir = args[0].strip('(').strip(')')
-                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = parse_dir(args[0], variables_data)
                 return lit + I[op]['variants']['da']['signal'] + \
                     I[op]['operation_code']
     if op_args == 'A':  # A

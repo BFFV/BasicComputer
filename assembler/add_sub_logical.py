@@ -1,5 +1,5 @@
 from instructions import INSTRUCTIONS as I
-from utils import to_binary, parse_lit
+from utils import to_binary, parse_lit, parse_dir
 
 
 def parse_add_sub_logical(instruction, variables_data):
@@ -28,8 +28,7 @@ def parse_args(op, op_args, variables_data):
                 return lit + I[op]['variants']['al']['signal'] + \
                     I[op]['operation_code']
             else:  # A,(dir)
-                memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = parse_dir(args[1], variables_data)
                 return lit + I[op]['variants']['ad']['signal'] + \
                     I[op]['operation_code']
         if args[0] == 'B': 
@@ -38,11 +37,9 @@ def parse_args(op, op_args, variables_data):
                 return lit + I[op]['variants']['ab']['signal'] + \
                     I[op]['operation_code']
             else:  # B, (dir)
-                memory_dir = args[1].strip('(').strip(')')
-                lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+                lit = parse_dir(args[1], variables_data)
                 return lit + I[op]['variants']['bd']['signal'] + \
                     I[op]['operation_code']
     elif '(' in op_args:
-        memory_dir = op_args.strip('(').strip(')')
-        lit = to_binary(variables_data[memory_dir]['dir_memory'], 16)
+        lit = parse_dir(op_args, variables_data)
         return lit + I[op]['variants']['d']['signal'] + I[op]['operation_code']
