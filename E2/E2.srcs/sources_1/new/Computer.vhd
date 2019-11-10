@@ -7,7 +7,7 @@ entity Computer is
           btnClk : in STD_LOGIC;
           btnFast : in STD_LOGIC;
           btnSel : in STD_LOGIC;
-          led : out STD_LOGIC_VECTOR (10 downto 0);
+          led : out STD_LOGIC_VECTOR (15 downto 0);
           seg : out STD_LOGIC_VECTOR (7 downto 0);
           an : out STD_LOGIC_VECTOR (3 downto 0));
 end Computer;
@@ -221,7 +221,7 @@ CU: ControlUnit port map(
     selPC => control(15),
     selDIn => control(16));
 
-led <= control;
+led <= control(16 downto 1);  -- All control signals are shown through the leds, except for W (write to RAM)
 
 ------------------------ ALU ------------------------
 
