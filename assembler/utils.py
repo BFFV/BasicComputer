@@ -5,7 +5,7 @@ def parser_number(number):
     if '-' in number:
         raise NotNegative
     if len(number) == 1 and number.isalpha():
-        return 0
+        raise ValueError
     if 'b' == number[-1]:
         return int(number.replace('b', ''), 2)
     elif 'd' == number[-1]:
