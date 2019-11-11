@@ -12,12 +12,12 @@ def parse_args(op, op_args, variables_data):
         if op_args == 'B,A':  # B,A
             return I[op]['variants']['ba']['lit'] + \
                    I[op]['variants']['ba']['signal'] + I[op]['operation_code']
-        elif op_args == '(B),A':
+        elif op_args == '(B),A':  # (B),A
             return I[op]['variants']['dba']['lit'] + \
                    I[op]['variants']['dba']['signal'] + I[op]['operation_code']
         elif '(' in op_args:
             args = op_args.split(',')
-            if args[1] == 'A':  # (dir), A
+            if args[1] == 'A':  # (dir),A
                 lit = parse_dir(args[0], variables_data)
                 return lit + I[op]['variants']['da']['signal'] + \
                     I[op]['operation_code']

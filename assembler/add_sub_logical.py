@@ -22,8 +22,8 @@ def parse_args(op, op_args, variables_data):
             return I[op]['variants']['bdb']['lit'] + \
                    I[op]['variants']['bdb']['signal'] + I[op]['operation_code']
         args = op_args.split(',')
-        if args[0] == 'A': 
-            if '(' not in args[1]:
+        if args[0] == 'A':
+            if '(' not in args[1]:  # A,lit
                 lit = parse_lit(args[1], variables_data) 
                 return lit + I[op]['variants']['al']['signal'] + \
                     I[op]['operation_code']
@@ -34,12 +34,12 @@ def parse_args(op, op_args, variables_data):
         if args[0] == 'B': 
             if '(' not in args[1]:  # B,lit
                 lit = parse_lit(args[1], variables_data)
-                return lit + I[op]['variants']['ab']['signal'] + \
+                return lit + I[op]['variants']['bl']['signal'] + \
                     I[op]['operation_code']
-            else:  # B, (dir)
+            else:  # B,(dir)
                 lit = parse_dir(args[1], variables_data)
                 return lit + I[op]['variants']['bd']['signal'] + \
                     I[op]['operation_code']
-    elif '(' in op_args:
+    elif '(' in op_args:  # (dir)
         lit = parse_dir(op_args, variables_data)
         return lit + I[op]['variants']['d']['signal'] + I[op]['operation_code']

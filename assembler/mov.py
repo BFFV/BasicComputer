@@ -48,7 +48,7 @@ def parse_args(mov_args, variables_data):
             lit = parse_dir(args[1], variables_data)
             return lit + MOV_DICT['variants']['bd']['signal'] + \
                 MOV_DICT['operation_code']
-        else:  # MOV (B), lit
+        else:  # MOV (B),lit
             lit = parse_lit(args[1], variables_data)
             return lit + MOV_DICT['variants']['dbl']['signal'] + \
                 MOV_DICT['operation_code']
