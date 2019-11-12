@@ -282,6 +282,20 @@ Arquitectura: Se creó la señal "regVal". Si el Clock está en flanco de subida
 
 ### Stack Pointer (SP):
 
+Señales de Entrada:
+
+- clock: Señal del Clock de la placa.
+
+- incSP: Señal de control que al tomar valor 1 incrementa en 1 el valor del SP.
+
+- decSP: Señal de control que al tomar valor 1 decrementa en 1 el valor del SP.
+
+Señales de Salida:
+
+- spOut: Valor actual del SP (12 bits). Se conecta al Multiplexor Address, permitiendo direccionar la memoria de datos para manejar el Stack.
+
+Arquitectura: Se utilizó un Stack Pointer de 12 bits de direccionamiento de la RAM, el que comienza con el valor inicial '111111111111' (última dirección de la memoria RAM), y sólo permite incrementar o decrementar su valor de a 1, dependiendo de los valores de las señales de control incSP y decSP. Su salida se conecta al Multiplexor Address, donde se utiliza al momento de ejecutar llamadas y retornos de subrutinas.
+
 ### Componentes Entregados
 
 Se utilizaron los siguientes componentes entregados en el repositorio para facilitar el desarrollo de la entrega:
@@ -290,7 +304,7 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - RAM: Actúa como la memoria de Datos del computador.
 
-- Reg: Registro multipropósito utilizado en los Registros A, B, PC y SP.
+- Reg: Registro multipropósito utilizado en los Registros A, B y PC.
 
 - Display_Controller: Controlador del Display, conectado con la salida de los Registros A y B para mostrar sus bytes menos significativos en valor Hexadecimal.
 
@@ -438,48 +452,50 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 # Assembler
 
-Para ejecutar el parser se debe tener python3.6 o 3.7 instalado, en la carpeta assembler se debe ejecutar el siguente comando en la terminal
+El archivo principal a ejecutar corresponde a `assembler.py`. Para utilizarlo se debe ejecutar el siguiente comando en la terminal, al interior de la carpeta `assembler` (requiere tener python 3.6 o 3.7 instalado):
 
 ```
-$ python3 assembler.py archivo.asm
+$ python3 assembler.py path_archivo (.asm)
 ```
 
-Como resultado se creará en la misma carpeta el archivo ROM.vhd, que contiene las instrucciones parseadas a lenguaje de máquina del archivo que se ingresó.
+Como resultado se creará el archivo `ROM.vhd` en la misma carpeta desde la que se ejecutó el comando de arriba. Este archivo contiene las instrucciones de assembly básico del archivo `.asm` original, traducidas al lenguaje de máquina utilizado por nuestro computador básico. Para poder integrar dichas instrucciones al proyecto, se deberá colocar el archivo `ROM.vhd` dentro de la carpeta `modulos`, lo que actualizará la memoria ROM utilizada por el proyecto de Vivado.
 
-Los archivos usados para parsear las instrucciones son:
+Los módulos utilizados para parsear las instrucciones fueron los siguientes:
 
-- `add_sub_logical.py` => Se encarga del parseo de las operaciones ADD,SUB,AND,OR,XOR.
+- `add_sub_logical.py` => Se encarga de parsear las operaciones ADD, SUB, AND, OR y XOR.
 - `cmp_.py` => Parsea la operación CMP.
 - `inc_dec.py` => Parsea las operaciones INC y DEC.
-- `jumps.py` => Se encarga de parsear los saltos JMP, JEQ, JNE, JGE, JGT, JLT, JLE, JCR además parsea el CALL.
+- `jumps.py` => Se encarga de parsear los saltos (JMP, JEQ, JNE, JGE, JGT, JLT, JLE, JCR), además de la operación CALL.
 - `mov.py` => Parsea la operación MOV.
 - `nop.py` => Parsea la operación NOP.
 - `push_pop_ret.py` => Parsea las operaciones PUSH, POP y RET.
-- `shifts_not.py` => Parsea las operaciones SHIFT y NOT.
-- `parse.py` => Un módulo que usando todos los módulos anteriores parsea una instrucción cualquiera de las soportadas para esta entrega.
+- `shifts_not.py` => Parsea las operaciones SHL, SHR y NOT.
+- `parser_file.py` => Usando todos los módulos anteriores es capaz de parsear cualquier instrucción pedida para esta entrega.
 
-En tanto los archivos que se encargan de leer el archivo a parsear son:
+Los módulos que se encargan de leer el archivo a parsear son:
 
-- `read_asm.py` => Lee el archivo a parsear y le quita comentarios, espacios, lineas en blanco, tabulaciones, etc. Es decir deja al archivo en la forma estándar (OPERACION VARIABLE1,VARIABLE2)
-- `parse_variables` => Se encarga de leer la sección DATA (una vez el archivo ya fue procesado por el módulo anterior) y cada asignación de variables a literal las deja de la forma MOV B,CONTADOR_DE_MEMORIA  - MOV (B), literal. También deja de esta forma a los arreglos.
-- `parse_jumps` => Se encarga de registrar las líneas de jumps en el archivo tomando en cuenta que hay instrucciones que en el archivo final contarán como dos (como por ejemplo los PUSH o RET)-
-- `assembly.py` => Lee el archivo completo y se encarga de dejarlo completamente en lenguaje de máquina, además de escribir en el archivo final.
+- `read_asm.py` => Lee el archivo a parsear y le quita los comentarios, espacios, líneas en blanco, tabulaciones, etc. Finalmente deja el archivo en la forma estándar (OPERACION OPERANDO1,OPERANDO2).
+- `parse_variables.py` => Se encarga de leer la sección DATA (una vez que el archivo ya fue procesado por el módulo anterior), y a cada asignación de variables las deja de la forma MOV B,CONTADOR_DE_MEMORIA - MOV (B), literal. De esta forma genera 2 instrucciones por cada variable declarada, las que se encargan de guardar los valores iniciales de las variables en la memoria RAM.
+- `parse_line_jumps.py` => Se encarga de registrar los labels de saltos y subrutinas en el archivo, tomando en cuenta que hay instrucciones que en el archivo final contarán como 2 (los POP y RET).
+- `assembler.py` => Lee el archivo `.asm` completo y se encarga de dejarlo en lenguaje de máquina, además de escribir el archivo `ROM.vhd`.
 
-Finalmente los siguientes dos módulos son usados por varios más:
+Finalmente, los siguientes módulos adicionales fueron utilizados en distintos archivos:
 
-- `utils.py` => Contiene funciones que son usadas por los demás módulos sin alguna funcionalidad relacionada directamente con el parser (convertir un número a binario por ejemplo, o a hexadecimal, etc).
+- `utils.py` => Contiene funciones que son usadas por los demás módulos sin tener una relación directa con el parser (convertir un número a binario o hexadecimal, por ejemplo).
 
-- `instructions.py` => Contiene un diccionario con las instrucciones de forma genérica y su versión en lenguaje de máquina, es decir MOV A,B => 000......01, MOV A,LIT => 0101.....01.
+- `instructions.py` => Contiene un diccionario con todas las instrucciones en forma genérica y en su versión en lenguaje de máquina, es decir, del estilo MOV A,B => 000......01, MOV A,LIT => 0101.....01.
+
+- `errors.py` => Contiene la clase de la excepción NotNegative, que evita que se ingresen números negativos como literales.
 
 # Distribución del Trabajo
 
-Lo más difícil fue
+Lo más difícil fue realizar el testing del assembler, ya que se iban descubriendo diversos errores específicos a medida que se probaban los distintos archivos `.asm` entregados, los que debían ser solucionados para finalmente completar el assembler.
 
 A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 ## Benjamín F. Farías:
 
-
+Actualizar la Unidad de Control con las nuevas señales agregadas, extendiendo su diseño. Además agregar los nuevos componentes de Hardware al computador básico y conectarlos entre sí y con los que ya existían. También apoyar en el testing del assembler y llevar a cabo el testing de la placa.
 
 ## Karl M. Haller:
 
@@ -495,7 +511,7 @@ A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 ## Juan A. Romero:
 
-Participó en el parser, su función fue principalmente encargar de transformar la instrucción a binario, además de testar y unir las distintas partes del parser.
+Desarrollar el assembler, en particular encargándose de la transformación de instrucciones assembly a lenguaje de máquina, además de testear y unir los distintos módulos utilizados por el assembler.
 
 # Instrucciones Soportadas
 
