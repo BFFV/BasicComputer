@@ -499,15 +499,15 @@ Actualizar la Unidad de Control con las nuevas señales agregadas, extendiendo s
 
 ## Karl M. Haller:
 
-
+Trabajar en el assembler, en particular encargándose del parseo de los labels de saltos/subrutinas que aparecen en la sección CODE (archivo `parse_line_jumps.py`).
 
 ## Diego Navarro:
 
-
+Crear e integrar el Stack Pointer, permitiendo manejar espacios de la memoria para realizar subrutinas.
 
 ## Juan I. Parot:
 
-
+Trabajar en el assembler, en particular encargándose del parseo de las variables declaradas en la sección DATA (archivo `parse_variables.py`).
 
 ## Juan A. Romero:
 
