@@ -25,7 +25,7 @@ Señales de Salida:
   - '00': Valor del Registro A
   - '01': Valor 0
   - '10': Valor 1
-  - '11': No se ocupa actualmente
+  - '11': Valor del Input externo
 
 - selB: Señales de control que seleccionan la salida del Multiplexor B. Tienen las siguientes combinaciones posibles:
   
@@ -63,6 +63,8 @@ Señales de Salida:
 - selPC: Señal de control que selecciona la salida del multiplexor PC. Permite elegir entre cargar el PC con un Literal (toma valor 0) o con un valor guardado en la RAM (toma valor 1).
 
 - selDIn: Señal de control que selecciona la entrada de datos a la memoria RAM. Permite elegir entre cargar la RAM con la salida de la ALU (toma valor 0) o con el valor del PC + 1 (toma valor 1).
+
+- loadOut: Señal de control que activa/desactiva la carga de Output en los registros del Display y de los Leds.
 
 Arquitectura: La Unidad de Control recibe una palabra de control de 20 bits, la que es decodificada según se explica en la sección 'Estructura de las Instrucciones'. Para lograr esto, primero se interpretan los 20 bits de todas las formas posibles según los tipos de operaciones (MOV, ADD, etc...), y posteriormente se utiliza un Multiplexor para determinar cuál de todas las interpretaciones es la correcta, revisando los 4 bits menos significativos de la palabra de control, ya que estos tienen codificado el tipo de operación a realizar (más detalles de esto en la sección 'Estructura de las Instrucciones').
 
@@ -434,6 +436,28 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - Las operaciones de este grupo ocurren en 2 ciclos del clock, por lo que cada una está compuesta por 2 instrucciones consecutivas.
 
+### IN:
+
+- Zona de Operaciones: '1001'
+
+- Zona de Señales: '00000000000000' + loadA (1 bit) + loadB (1 bit)
+
+- La señal selA toma valor '11', selB toma valor '01', W se obtiene aplicando loadA NOR loadB y selAdd toma valor '01'. Las demás señales de control valen 0.
+
+- El valor del Literal indica el puerto de entrada del Input externo.
+
+### OUT:
+
+- Zona de Operaciones: '1010'
+
+- Zona de Señales: '0000000000000' + selAdd (1 bit, se omite el primero) + selB (2 bits)
+
+- La señal loadOut toma valor 1. Las demás señales de control valen 0.
+
+- El bit más significativo de la señal de control selAdd NO está en la Zona de Señales de este grupo, ya que vale 0 para todas las operaciones OUT.
+
+- El valor de salida del Multiplexor B indica el puerto de salida del Output.
+
 # Assembler
 
 El archivo principal a ejecutar corresponde a `assembler.py`. Para utilizarlo se debe ejecutar el siguiente comando en la terminal, al interior de la carpeta `assembler` (requiere tener python 3.6 o 3.7 instalado):
@@ -598,6 +622,13 @@ El computador creado soporta TODAS las instrucciones pedidas para la entrega. La
 | POP (2nd) | A         | 0000000000000000 | 0000000000000010 | 1000                |
 | POP (1st) | B         | 0000000000000000 | 0000000000000000 | 1000                |
 | POP (2nd) | B         | 0000000000000000 | 0000000000000001 | 1000                |
+| IN        | A,Lit     | Lit              | 0000000000000010 | 1001                |
+| IN        | B,Lit     | Lit              | 0000000000000001 | 1001                |
+| IN        | (B),Lit   | Lit              | 0000000000000000 | 1001                |
+| OUT       | A,B       | 0000000000000000 | 0000000000000000 | 1010                |
+| OUT       | A,(B)     | 0000000000000000 | 0000000000000111 | 1010                |
+| OUT       | A,(Dir)   | Dir              | 0000000000000011 | 1010                |
+| OUT       | A,Lit     | Lit              | 0000000000000010 | 1010                |
 | NOP       | -         | 0000000000000000 | 0000000000000000 | 0000                |
 
 # Anexo - Entregas Pasadas
