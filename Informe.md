@@ -312,22 +312,6 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - Debouncer: Es utilizado para estabilizar las señales de entrada de los Botones.
 
-## Funcionalidades Extra
-
-Se implementaron las siguientes funcionalidades Extra:
-
-### Controlar Velocidad del Clock:
-
-Con el botón de la derecha (btnFast) se puede aumentar la velocidad del Clock en tiempo real hasta llegar al máximo permitido por el Clock Divider. Si se vuelve a presionar después de esto simplemente volverá a la velocidad más lenta de nuevo.
-
-### Clock Manual:
-
-Con el botón de arriba (btnSel) se puede ALTERNAR en tiempo real entre utilizar el Clock automático (default) y un Clock manual. Este Clock manual se utiliza apretando el botón central (btnClk), lo que simula 1 ciclo de ejecución del computador. Mientras se esté en el modo manual no tendrá efecto el intentar cambiar la velocidad. Análogamente, mientras se esté en el modo automático no tendrá efecto el intentar apretar el botón de Clock manual. 
-
-### Input con Switches:
-
-Se puede CAMBIAR una línea en el apartado de la ROM dentro del módulo `Computer.vhd` para poder utilizar los switches a modo de input de instrucciones (en vez de recibirlas desde la ROM). Esto está permitido sólo en el modo de Clock manual (al estar en el modo automático se leerá la última configuración de switches que se usó en el modo manual). Como son sólo 16 switches, estos pueden representar solamente los 16 bits menos significativos de las instrucciones. Esto significa que no permiten elegir literal, sin embargo resultan útiles para probar distintas operaciones en el computador antes de escribirlas dentro de la ROM.
-
 # Estructura de las Instrucciones
 
 Los 36 bits de cada instrucción se dividieron de la siguiente forma:
@@ -489,29 +473,29 @@ Finalmente, los siguientes módulos adicionales fueron utilizados en distintos a
 
 # Distribución del Trabajo
 
-Lo más difícil fue realizar el testing del assembler, ya que se iban descubriendo diversos errores específicos a medida que se probaban los distintos archivos `.asm` entregados, los que debían ser solucionados para finalmente completar el assembler.
+Lo más difícil fue 
 
 A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 ## Benjamín F. Farías:
 
-Actualizar la Unidad de Control con las nuevas señales agregadas, extendiendo su diseño. Además agregar los nuevos componentes de Hardware al computador básico y conectarlos entre sí y con los que ya existían. También apoyar en el testing del assembler y llevar a cabo el testing de la placa.
+
 
 ## Karl M. Haller:
 
-Trabajar en el assembler, en particular encargándose del parseo de los labels de saltos/subrutinas que aparecen en la sección CODE (archivo `parse_line_jumps.py`).
+
 
 ## Diego Navarro:
 
-Crear e integrar el Stack Pointer, permitiendo manejar espacios de la memoria para realizar subrutinas.
+
 
 ## Juan I. Parot:
 
-Trabajar en el assembler, en particular encargándose del parseo de las variables declaradas en la sección DATA (archivo `parse_variables.py`).
+
 
 ## Juan A. Romero:
 
-Desarrollar el assembler, en particular encargándose de la transformación de instrucciones assembly a lenguaje de máquina, además de testear y unir los distintos módulos utilizados por el assembler.
+
 
 # Instrucciones Soportadas
 
@@ -683,3 +667,47 @@ def multiplicar(a,b):
         a -= 1
     return resultado
  ```
+
+# Entrega 3
+
+# Distribución del Trabajo
+
+Lo más difícil fue realizar el testing del assembler, ya que se iban descubriendo diversos errores específicos a medida que se probaban los distintos archivos `.asm` entregados, los que debían ser solucionados para finalmente completar el assembler.
+
+A continuación se encuentra el trabajo realizado por cada integrante del grupo:
+
+## Benjamín F. Farías:
+
+Actualizar la Unidad de Control con las nuevas señales agregadas, extendiendo su diseño. Además agregar los nuevos componentes de Hardware al computador básico y conectarlos entre sí y con los que ya existían. También apoyar en el testing del assembler y llevar a cabo el testing de la placa.
+
+## Karl M. Haller:
+
+Trabajar en el assembler, en particular encargándose del parseo de los labels de saltos/subrutinas que aparecen en la sección CODE (archivo `parse_line_jumps.py`).
+
+## Diego Navarro:
+
+Crear e integrar el Stack Pointer, permitiendo manejar espacios de la memoria para realizar subrutinas.
+
+## Juan I. Parot:
+
+Trabajar en el assembler, en particular encargándose del parseo de las variables declaradas en la sección DATA (archivo `parse_variables.py`).
+
+## Juan A. Romero:
+
+Desarrollar el assembler, en particular encargándose de la transformación de instrucciones assembly a lenguaje de máquina, además de testear y unir los distintos módulos utilizados por el assembler.
+
+# Funcionalidades Extra (ya NO están soportadas)
+
+Se implementaron las siguientes funcionalidades Extra:
+
+### Controlar Velocidad del Clock:
+
+Con el botón de la derecha (btnFast) se puede aumentar la velocidad del Clock en tiempo real hasta llegar al máximo permitido por el Clock Divider. Si se vuelve a presionar después de esto simplemente volverá a la velocidad más lenta de nuevo.
+
+### Clock Manual:
+
+Con el botón de arriba (btnSel) se puede ALTERNAR en tiempo real entre utilizar el Clock automático (default) y un Clock manual. Este Clock manual se utiliza apretando el botón central (btnClk), lo que simula 1 ciclo de ejecución del computador. Mientras se esté en el modo manual no tendrá efecto el intentar cambiar la velocidad. Análogamente, mientras se esté en el modo automático no tendrá efecto el intentar apretar el botón de Clock manual. 
+
+### Input con Switches:
+
+Se puede CAMBIAR una línea en el apartado de la ROM dentro del módulo `Computer.vhd` para poder utilizar los switches a modo de input de instrucciones (en vez de recibirlas desde la ROM). Esto está permitido sólo en el modo de Clock manual (al estar en el modo automático se leerá la última configuración de switches que se usó en el modo manual). Como son sólo 16 switches, estos pueden representar solamente los 16 bits menos significativos de las instrucciones. Esto significa que no permiten elegir literal, sin embargo resultan útiles para probar distintas operaciones en el computador antes de escribirlas dentro de la ROM.
