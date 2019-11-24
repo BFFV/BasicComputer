@@ -38,7 +38,8 @@ component ControlUnit is
           incSP : out STD_LOGIC;
           decSP : out STD_LOGIC;
           selPC : out STD_LOGIC;
-          selDIn : out STD_LOGIC);
+          selDIn : out STD_LOGIC;
+          loadOut : out STD_LOGIC);
 end component;
 
 component RAM is
@@ -128,7 +129,7 @@ signal ins : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";          
 signal swIns : STD_LOGIC_VECTOR (19 downto 0) := "00000000000000000000";                    --- Control Instruction From Switches (Testing) ---
 signal statIn : STD_LOGIC_VECTOR (2 downto 0) := "000";                                     --- Status Codes ---
 signal statOut : STD_LOGIC_VECTOR (2 downto 0) := "000";                                    --- Status Register Output ---
-signal control : STD_LOGIC_VECTOR (16 downto 0) := "00000000000000000";                     --- Control Signals ---
+signal control : STD_LOGIC_VECTOR (17 downto 0) := "000000000000000000";                     --- Control Signals ---
 signal DbtnClk : STD_LOGIC := '0';                                                          --- Manual Clock Input ---
 signal DbtnFast : STD_LOGIC := '0';                                                         --- Increase Clock Speed ---   
 signal DbtnSel : STD_LOGIC := '0';                                                          --- Switch Clock Mode (Manual/Automatic) ---
@@ -219,9 +220,8 @@ CU: ControlUnit port map(
     incSP => control(13),
     decSP => control(14),
     selPC => control(15),
-    selDIn => control(16));
-
-led <= control(16 downto 1);  -- All control signals are shown through the leds, except for W (write to RAM)
+    selDIn => control(16),
+    loadOut => control(17));
 
 ------------------------ ALU ------------------------
 
@@ -249,7 +249,7 @@ IMem: ROM port map(
     address => romAdd,
     dataout => romOut);
     
-ins <= romOut(19 downto 0);  -- 'romOut' for ROM input, 'swIns' for Switches input (Testing)
+ins <= romOut(19 downto 0);
 
 ------------------------ Status Register ------------------------
 
