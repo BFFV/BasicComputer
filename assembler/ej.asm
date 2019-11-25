@@ -1,0 +1,14 @@
+DATA:
+
+a 1
+
+
+CODE:
+
+IN A,1
+IN B,1001b
+IN (B),14h
+OUT A,B
+OUT A,(B)
+OUT A,(a)
+OUT A,8d

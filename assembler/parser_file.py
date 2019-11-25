@@ -6,6 +6,7 @@ from shifts_not import parse_not_shifts
 from mov import parse_mov
 from inc_dec import parse_inc_dec
 from push_pop_ret import parse_push_pop_ret
+from in_out import parse_in_out
 
 
 SHIFTS_NOT = {'SHR', 'SHL', 'NOT'}
@@ -13,6 +14,7 @@ ADD_SUB_LOGICAL = {'ADD', 'SUB', 'AND', 'OR', 'XOR'}
 INC_DEC = {'INC', 'DEC'}
 JUMPS = {'CALL', 'JMP', 'JEQ', 'JNE', 'JGE', 'JGT', 'JLT', 'JLE', 'JCR'}
 PP = {'PUSH', 'POP', 'RET'}
+IN_OUT = {'IN', 'OUT'}
 
 
 def parse(line, variable_data, line_data):
@@ -27,6 +29,8 @@ def parse(line, variable_data, line_data):
         return parse_jumps(line, line_data)
     elif instruction in PP:
         return parse_push_pop_ret(line)
+    elif instruction in IN_OUT:
+        return parse_in_out(line, variable_data)
     elif instruction == 'MOV':
         return parse_mov(line, variable_data)
     elif instruction == 'CMP':
