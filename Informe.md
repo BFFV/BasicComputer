@@ -1,6 +1,6 @@
 ﻿# Bitácora del Proyecto :pencil:
 
-# Funcionamiento
+# Funcionamiento :zap:
 
 ## Componentes del Computador Básico
 
@@ -314,7 +314,7 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - Debouncer: Es utilizado para estabilizar las señales de entrada de los Botones.
 
-# Estructura de las Instrucciones
+# Estructura de las Instrucciones :building_construction:
 
 Los 36 bits de cada instrucción se dividieron de la siguiente forma:
 
@@ -458,7 +458,7 @@ A continuación se detallan los distintos grupos de operaciones que se pueden re
 
 - El valor de salida del Multiplexor B indica el puerto de salida del Output.
 
-# Assembler
+# Assembler :package:
 
 El archivo principal a ejecutar corresponde a `assembler.py`. Para utilizarlo se debe ejecutar el siguiente comando en la terminal, al interior de la carpeta `assembler` (requiere tener python 3.6 o 3.7 instalado):
 
@@ -495,7 +495,31 @@ Finalmente, los siguientes módulos adicionales fueron utilizados en distintos a
 
 - `errors.py` => Contiene la clase de la excepción NotNegative, que evita que se ingresen números negativos como literales.
 
-# Distribución del Trabajo
+# Juego (MemoLED) :video_game:
+
+## Descripción General: 
+
+El juego permite desafiar la memoria visual. La placa debe mostrar una secuencia de LEDs prendidos y apagados (ocupando los 16 LEDs), comenzando con una secuencia inicial que posee sólo 3 LEDs encendidos. Estas secuencias serán definidas en cada ronda por otra persona encargada de ‘cargar’ la configuración de los LEDs (utilizando los switches), sin que el jugador vea lo que hace. A esta persona le llamaremos el ‘asistente’. Luego de un tiempo determinado desde que se encendieron, todos los LEDs se apagarán y el jugador deberá subir los switches correspondientes a los LEDs que estaban prendidos en la secuencia (intentando recordarlos), y finalmente confirmar su respuesta pulsando el botón “UP”. Si la respuesta es correcta, el display deberá sumar un éxito y se pasa a la siguiente ronda. Por cada éxito obtenido se aumenta en 1 la cantidad de LEDs prendidos en la ronda actual, hasta llegar a un máximo de 15 LEDs prendidos en la ‘última ronda’.
+
+## Descripción Detallada (Reglas y Flujo de Juego):
+
+1) Inicialmente el display deberá mostrar los dígitos “3000”. Su significado se explica a continuación:
+
+   - a) El número de más a la izquierda del display indica la cantidad de LEDs que serán encendidos en la ronda actual. Se comienza con 3 LEDs encendidos en la primera secuencia, y por cada éxito se aumenta en 1.
+  
+    - b) El número siguiente del display (segundo desde la izquierda) representa la cantidad de tiempo que permanecerán prendidos los LEDs en la ronda, antes de apagarse para que el jugador intente recordar la secuencia. Con el botón “RIGHT” se aumenta la dificultad (menos tiempo prendidos los LEDs), por lo que disminuye en 1 el número correspondiente en el display, y con el botón “LEFT” se disminuye la dificultad (aumenta en 1 el segundo dígito del display). La dificultad debe moverse entre 1 y 15 (F en hexadecimal). Si la dificultad es 1, se tendrán 4.5 segundos (4500 milisegundos) para memorizar los LEDs. Por cada nivel de dificultad adicional este tiempo disminuirá en 300 ms, por lo que en el nivel mayor de dificultad (15), se tendrán sólo 0.3 segundos (300 milisegundos) para observar los LEDs prendidos.
+  
+    - c) Los 2 números de la derecha indican la cantidad de aciertos que lleva el jugador. Comienza en 00 porque el jugador lleva 0 aciertos.
+
+2) Luego de que el jugador configure la dificultad al comienzo, deberá entregarle la placa al asistente. Entonces será el turno de este para configurar la primera secuencia a mostrar, utilizando los switches para representar los LEDs a prender y respetando la cantidad de LEDs que deben estar prendidos en el nivel actual. Una vez subidos los switches, apretará el botón “CENTER” para cargar la secuencia a la placa (todo esto sin que el jugador vea lo que está haciendo). Luego, el asistente le deberá devolver la placa al jugador, quién deberá apretar el botón “DOWN” para comenzar la ronda. En la ronda se prenderán los LEDs durante el tiempo correspondiente según la dificultad escogida, tras lo que se apagarán para que el jugador intente recordar la secuencia.
+
+3) Cada switch corresponde a 1 LED de la placa. El jugador debe subir los LEDs que hayan estado prendidos y confirmar su respuesta con el botón “UP”:
+    - a) Si la respuesta es correcta, aumenta en 1 el indicador de éxitos del display (los 2 números de la derecha). Luego de cada éxito, aumenta en 1 la cantidad de LEDs que se prenden para adivinar en la siguiente ronda. Tras esto se le vuelve a pasar la placa al asistente para que configure la siguiente secuencia.
+    - b) Si la respuesta es incorrecta, el jugador pierde y se vuelve a mostrar “3000” en el display (haciendo ‘reset’ del juego).
+
+4) Si el usuario acierta hasta llegar a los 15 LEDs prendidos, puede seguir ganando indefinidamente, pero el contador de éxitos se reiniciará eventualmente (ocurre overflow al ganar 256 veces seguidas) y la cantidad de LEDs se mantendrá en 15 hasta que pierda, momento en el que se hace un ‘reset’ del juego y se vuelve al estado inicial del display “3000”.
+
+# Distribución del Trabajo :briefcase:
 
 Lo más difícil fue 
 
@@ -521,7 +545,7 @@ A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 
 
-# Instrucciones Soportadas
+# Instrucciones Soportadas :white_check_mark:
 
 El computador creado soporta TODAS las instrucciones pedidas para la entrega. La tabla con dichas instrucciones y sus palabras de control se muestra a continuación:
 
@@ -631,7 +655,7 @@ El computador creado soporta TODAS las instrucciones pedidas para la entrega. La
 | OUT       | A,Lit     | Lit              | 0000000000000010 | 1010                |
 | NOP       | -         | 0000000000000000 | 0000000000000000 | 0000                |
 
-# Anexo - Entregas Pasadas
+# Anexo - Entregas Pasadas :construction:
 
 # Entrega 2
 
