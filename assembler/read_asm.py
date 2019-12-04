@@ -3,7 +3,7 @@ def read_assembly(path):
     Esta función lee línea por línea los
     archivos y omite los comentarios
     """
-    with open(path, 'r', encoding='utf-8') as file:
+    with open(path, 'r', encoding='latin1') as file:
         for i in file:
             line = i.strip().replace('\t', ' ')
             parsed_line = delete_white_spaces(delete_comments(line))
