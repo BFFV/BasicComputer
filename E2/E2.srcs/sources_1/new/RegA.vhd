@@ -5,6 +5,7 @@ entity RegA is
     Port (loadA : in STD_LOGIC;
           clock : in STD_LOGIC;
           dataIn : in STD_LOGIC_VECTOR (15 downto 0);
+          inputIn : in STD_LOGIC_VECTOR (15 downto 0);
           dataOut : out STD_LOGIC_VECTOR (15 downto 0);
           selA : in STD_LOGIC_VECTOR (1 downto 0);
           valueA : out STD_LOGIC_VECTOR (15 downto 0));
@@ -23,6 +24,7 @@ end component;
 
 component mux_a is
     Port (A : in  std_logic_vector(15 downto 0);
+          input : in  std_logic_vector(15 downto 0);
           selA : in  std_logic_vector(1 downto 0);
           dataOut : out std_logic_vector(15 downto 0));
 end component;
@@ -42,6 +44,7 @@ Ra: Reg port map (
 
 Ma: mux_a port map(
     A => reg_out,
+    input => inputIn,
     selA => selA,              
     dataOut => mux_out);
 
