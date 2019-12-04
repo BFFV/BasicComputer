@@ -32,15 +32,17 @@ loop1:
   CMP A,B
   JEQ dere
    
-  MOV A,(btn)
-  MOV B,4
-  CMP A,B
-  JEQ izq
+  seguir_der: 
+    MOV A,(btn)
+    MOV B,4
+    CMP A,B
+    JEQ izq
   
-  MOV A,(btn)
-  MOV B,1   
-  CMP A,B
-  JEQ centre
+  seguir_izq:
+    MOV A,(btn)
+    MOV B,1   
+    CMP A,B
+    JEQ centre
   JMP loop1                      
   centre:
       MOV B,0		    // Guardar los switches que quizo
@@ -124,7 +126,7 @@ dere:
     JNE subir  
     POP A
     POP B
-    JMP 34 
+    JMP seguir_der 
 
 subir:
     MOV A,0100h
@@ -138,7 +140,7 @@ subir:
     MOV (niv),A  
     POP A
     POP B
-    JMP 34
+    JMP seguir_der
     
 izq: 
     PUSH A
@@ -151,7 +153,7 @@ izq:
     JNE bajar
     POP A
     POP B 
-    JMP 38  
+    JMP seguir_izq  
 
 bajar:  
     MOV B,0100h
@@ -164,7 +166,7 @@ bajar:
     MOV (niv),A 
     POP A
     POP B
-    JMP 38
+    JMP seguir_izq
  
 mostrar_lu:
   MOV A,(cor)          // Se muestran los led a adivinar 
