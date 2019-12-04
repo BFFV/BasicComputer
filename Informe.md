@@ -478,6 +478,7 @@ Los módulos utilizados para parsear las instrucciones fueron los siguientes:
 - `nop.py` => Parsea la operación NOP.
 - `push_pop_ret.py` => Parsea las operaciones PUSH, POP y RET.
 - `shifts_not.py` => Parsea las operaciones SHL, SHR y NOT.
+- `in_out.py` => Parsea las operaciones IN y OUT.
 - `parser_file.py` => Usando todos los módulos anteriores es capaz de parsear cualquier instrucción pedida para esta entrega.
 
 Los módulos que se encargan de leer el archivo a parsear son:
