@@ -1,34 +1,33 @@
 DATA:
 
-cor  0                 // variable para el numero correcto
-num  00FFh             //  Numero de intentos que se muestra en los led
-unos 0                 //               
-disp 3100h             // numero que se muestra en display 
-aux2 0 
-btn  0   
-niv  1    
-aux  0
+  cor  0                 // variable para el numero correcto
+  num  00FFh             //  Numero de intentos que se muestra en los led
+  unos 0                 //               
+  disp 3100h             // numero que se muestra en display 
+  aux2 0 
+  btn  0   
+  niv  1    
+  aux  0
 
 CODE:
 
-  MOV A, 1000          // Primera parte, espera unos segundos con std_wait_ms
+  MOV A,1000            // Primera parte, espera unos segundos con std_wait_ms
   CALL std_wait_ms    
-
-  MOV A, 4000
+  MOV A,4000
   PUSH A
   SHR A
   PUSH A
-  MOV A,(disp)          // Se muestra el numero de leds a mostrar/ nivel/ etapa
+  MOV A,(disp)           // Se muestra el numero de leds a mostrar/ nivel/ etapa
   OUT A,0
   POP A
   CALL std_wait_ms
   POP A
 
 loop1:
-  CALL std_io_btn_wait      // Se espera a que el jugadir aprete un botón para  
+  CALL std_io_btn_wait   // Se espera a que el jugadir aprete un boton para  
   MOV (btn),A
   
-  MOV B,8                   // se retorna btn en A
+  MOV B,8                // se retorna btn en A
   CMP A,B
   JEQ dere
    
@@ -43,38 +42,33 @@ loop1:
     MOV B,1   
     CMP A,B
     JEQ centre
-  JMP loop1                      
+    JMP loop1     
+                 
   centre:
-      MOV B,0		    // Guardar los switches que quizo
-      IN B,0
-      MOV (cor),B
+    MOV B,0		           // Guardar los switches que quizo
+    IN B,0
+    MOV (cor),B
   
   CALL esperar_d
-  
-  MOV A,(cor)          // Se muestra en los led
+  MOV A,(cor)            // Se muestra en los led
   OUT A,1   
   CALL esperar_tiempo
   MOV A,0000h
   OUT A,1 
-   
-  CALL esperar_u
-  
-                 		    // Se espera a que elija q switches poner y cuando
-  MOV A,(cor)		  // apreta el boton se guarda este intento 
+  CALL esperar_u         // Se espera a que elija q switches poner y cuando
+  MOV A,(cor)		         // apreta el boton se guarda este intento 
   IN B,0		
   CMP A,B
-  JEQ gana                 // Si esta bien gana, si no se descuenta un intento
+  JEQ gana               // Si esta bien gana, si no se descuenta un intento
   MOV A,0000h
   OUT A,0
   JMP end
-  
 
 end:
-   JMP end  
+  JMP end  
 
-
-ganar:                   // Si se gana se muestran led alternados cada 
-  PUSH A		//1 segundo
+ganar:                   // Si se gana se muestran led alternados cada 1 segundo
+  PUSH A
   SHR A
   PUSH A
   MOV A,AAAAh
@@ -87,7 +81,7 @@ ganar:                   // Si se gana se muestran led alternados cada
   POP A
   CALL std_wait_ms
   POP A
-JMP ganar
+  JMP ganar
 
 gana: 
   MOV A,(aux2)
@@ -118,120 +112,114 @@ gana:
   JMP esperar_c
 
 dere:
-    PUSH A
-    PUSH B
-    MOV B,(disp)
-    MOV A,3F00h  
-    CMP A,B 
-    JNE subir  
-    POP A
-    POP B
-    JMP seguir_der 
+  PUSH A
+  PUSH B
+  MOV B,(disp)
+  MOV A,3F00h  
+  CMP A,B 
+  JNE subir  
+  POP A
+  POP B
+  JMP seguir_der 
 
 subir:
-    MOV A,0100h
-    ADD B,A
-    MOV (disp),B
-    MOV A,B
-    OUT A,0 
-    
-    MOV A,(niv)
-    ADD A,1
-    MOV (niv),A  
-    POP A
-    POP B
-    JMP seguir_der
+  MOV A,0100h
+  ADD B,A
+  MOV (disp),B
+  MOV A,B
+  OUT A,0 
+  MOV A,(niv)
+  ADD A,1
+  MOV (niv),A  
+  POP A
+  POP B
+  JMP seguir_der
     
 izq: 
-    PUSH A
-    PUSH B
-    MOV A,(disp)
-    MOV B,3100h  
-    PUSH A 
-    PUSH B
-    CMP A,B 
-    JNE bajar
-    POP A
-    POP B 
-    JMP seguir_izq  
+  PUSH A
+  PUSH B
+  MOV A,(disp)
+  MOV B,3100h  
+  PUSH A 
+  PUSH B
+  CMP A,B 
+  JNE bajar
+  POP A
+  POP B 
+  JMP seguir_izq  
 
 bajar:  
-    MOV B,0100h
-    SUB A,B  
-    MOV (disp),A
-    OUT A,0   
-    
-    MOV A,(niv)
-    SUB A,1
-    MOV (niv),A 
-    POP A
-    POP B
-    JMP seguir_izq
+  MOV B,0100h
+  SUB A,B  
+  MOV (disp),A
+  OUT A,0   
+  MOV A,(niv)
+  SUB A,1
+  MOV (niv),A 
+  POP A
+  POP B
+  JMP seguir_izq
  
 mostrar_lu:
-  MOV A,(cor)          // Se muestran los led a adivinar 
+  MOV A,(cor)            // Se muestran los led a adivinar 
   OUT A,1
-  MOV A, 1000          // Espera los segundos con std_wait_ms AQUII
-  CALL std_wait_ms
-        
+  MOV A,1000             // Espera los segundos con std_wait_ms AQUI
+  CALL std_wait_ms     
                               
 display:
   PUSH A
-  MOV A,(disp)          // Se muestra el nuevo display
+  MOV A,(disp)           // Se muestra el nuevo display
   OUT A,0
   POP A
-  RET
- 
-        
+  RET      
         
 esperar_d:
- PUSH B				// Guarda B				// 
- PUSH A
+  PUSH B				           // Guarda B
+  PUSH A
+
  atrape:
-  CALL std_io_btn_wait
-            
+  CALL std_io_btn_wait    
   MOV B,10h  
   CMP A,B
   JNE atrape 
-  
- POP B 
- POP A
- RET
+  POP B 
+  POP A
+  RET
  
 esperar_u:
- PUSH B				// Guarda B				// 
- PUSH A
+  PUSH B				           // Guarda B
+  PUSH A
+
  atrap:
-  CALL std_io_btn_wait
-            
+  CALL std_io_btn_wait         
   MOV B,2  
   CMP A,B
   JNE atrap 
-  
- POP B 
- POP A
- RET  
+  POP B 
+  POP A
+  RET  
  
 esperar_c:
   PUSH A
-  PUSH B 
+  PUSH B
+
   atra:
-    CALL std_io_btn_wait
-            
+    CALL std_io_btn_wait        
     MOV B,1  
     CMP A,B
     JNE atra 
-  POP A
-  POP B
-  JMP centre
+    POP A
+    POP B
+    JMP centre
         
-esperar_tiempo:         //tiempo de mostrar leds
+esperar_tiempo:          // tiempo de mostrar leds
   PUSH B
   PUSH A
-  MOV B,(niv)           //tiempo 4500mseg  
+  MOV B,(niv)            // tiempo 4500mseg  
   MOV A,16
   SUB A,B
   MOV (aux),A
+
   esp300:
     MOV A,300
     CALL std_wait_ms 
@@ -240,12 +228,11 @@ esperar_tiempo:         //tiempo de mostrar leds
     MOV (aux),A
     CMP A,0
     JNE esp300 
-  POP B
-  POP A
-  RET
-     
+    POP B
+    POP A
+    RET
 
-//////////////////Libraria wait //////////////////////////////////////////
+////////////////// Lib wait //////////////////////////////////////////
 									//
 std_wait_abs_s_ms:		// Seg en A, Mseg en B			//
  PUSH B				// Guarda Mseg				//
@@ -284,10 +271,10 @@ std_wait_ms:			// Mseg en A, * en B			//
  IN B,2				// Seg actual				//
  std_wait_ms_divide_lp:							//
   CMP A,1000			// Si Mseg < 1000			//
-  JLT std_wait_ms_divide_end	// Terminar división			//
+  JLT std_wait_ms_divide_end	// Terminar division			//
   SUB A,1000			// Mseg - 1000				//
   INC B				// Seg ++				//
-  JMP std_wait_ms_divide_lp	// Continuar división			//
+  JMP std_wait_ms_divide_lp	// Continuar division			//
  std_wait_ms_divide_end:						//
  XOR A,B			// Intercambiar registros		//
  XOR B,A			// 					//
@@ -299,7 +286,7 @@ RET				// Void					//
 									//
 //////////////////////////////////////////////////////////////////////////
 
-/////////////////Libreria std_io//////////////////////////////////////////
+///////////////// Lib std_io //////////////////////////////////////////
 									//
 std_io_btn_wait:		// * en A, * en B			//
  PUSH B				// Guarda B				//
@@ -311,7 +298,7 @@ std_io_btn_wait:		// * en A, * en B			//
  XOR B,A			// Bits cambiados			//
  std_io_btn_wait_release_lp:						//
   IN A,1			// Nuevo estado				//
-  AND A,B			// Bits aún cambiados			//
+  AND A,B			// Bits aun cambiados			//
   CMP A,0			// SI != 0				//
   JNE std_io_btn_wait_release_lp// Continuar				//
   MOV A,B			// Bits cambiados a A			//
@@ -321,6 +308,4 @@ RET				// Retorna Bit(s) en A			//
 
 
 							//
-////////////////////////////////////////////////////////////////////////// 
-
- 
+//////////////////////////////////////////////////////////////////////////
