@@ -392,7 +392,7 @@ with control(12 downto 11) select
  ------------------------ Decoder Out ------------------------
 
  Decoder: DecoderOut port map(
-    portIn => valB,
+    portIn => opB,
     loadOut => control(17),
     disOut => disLoad,
     ledOut => ledLoad);
