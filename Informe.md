@@ -380,9 +380,9 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - Reg: Registro multipropósito utilizado en los Registros A, B, PC, Dis y Led.
 
-- Display_Controller: Controlador del Display, conectado con la salida de los Registros A y B para mostrar sus bytes menos significativos en valor Hexadecimal.
+- Display_Controller: Controlador del Display.
 
-- Clock_Divider: Permite disminuir la frecuencia del Clock de la placa. Es utilizado en conjunto con el Botón Derecho (btnFast) para modificar la velocidad del Clock en tiempo real.
+- Clock_Divider: Permite disminuir la frecuencia del Clock de la placa.
 
 - Debouncer: Es utilizado para estabilizar las señales de entrada de los Botones.
 
