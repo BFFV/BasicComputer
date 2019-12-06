@@ -378,7 +378,7 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 
 - RAM: Actúa como la memoria de Datos del computador.
 
-- Reg: Registro multipropósito utilizado en los Registros A, B y PC.
+- Reg: Registro multipropósito utilizado en los Registros A, B, PC, Dis y Led.
 
 - Display_Controller: Controlador del Display, conectado con la salida de los Registros A y B para mostrar sus bytes menos significativos en valor Hexadecimal.
 
