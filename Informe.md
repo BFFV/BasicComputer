@@ -508,7 +508,7 @@ El juego permite desafiar la memoria visual. La placa debe mostrar una secuencia
 
    - a) El número de más a la izquierda del display indica la cantidad de LEDs que serán encendidos en la ronda actual. Se comienza con 3 LEDs encendidos en la primera secuencia, y por cada éxito se aumenta en 1.
   
-    - b) El número siguiente del display (segundo desde la izquierda) corresponde a la dificultad del juego, representada por el tiempo durante el que estarán encendidos los LEDs en cada ronda. Con el botón “RIGHT” se aumenta la dificultad (menos tiempo prendidos los LEDs), por lo que aumenta en 1 el número correspondiente en el display, y con el botón “LEFT” se disminuye la dificultad (disminuye en 1 el segundo dígito del display). La dificultad debe moverse entre 1 y 15 (F en hexadecimal). Si la dificultad es 1, se tendrán 4.5 segundos (4500 milisegundos) para memorizar los LEDs. Por cada nivel de dificultad adicional este tiempo disminuirá en 300 ms, por lo que en el nivel mayor de dificultad (15), se tendrán sólo 0.3 segundos (300 milisegundos) para observar los LEDs prendidos.
+    - b) El número siguiente del display (segundo desde la izquierda) corresponde a la dificultad del juego, representada por el tiempo durante el que estarán encendidos los LEDs en cada ronda. Con el botón “RIGHT” se aumenta la dificultad (menos tiempo prendidos los LEDs), por lo que aumenta en 1 el número correspondiente en el display, y con el botón “LEFT” se disminuye la dificultad (disminuye en 1 el segundo dígito del display). La dificultad debe moverse entre 1 y 15 (F en hexadecimal). Si la dificultad es 1, se tendrán 4.5 segundos (4500 milisegundos) para memorizar los LEDs. Por cada nivel de dificultad adicional este tiempo disminuirá en 300 ms, por lo que en el nivel mayor de dificultad (15), se tendrán sólo 0.3 segundos (300 milisegundos) para observar los LEDs prendidos. La dificultad sólo puede ser modificada al comienzo del juego o tras un 'reset' del juego al perder.
   
     - c) Los 2 números de la derecha indican la cantidad de aciertos que lleva el jugador. Comienza en 00 porque el jugador lleva 0 aciertos.
 
@@ -518,7 +518,7 @@ El juego permite desafiar la memoria visual. La placa debe mostrar una secuencia
     - a) Si la respuesta es correcta, aumenta en 1 el indicador de éxitos del display (los 2 números de la derecha). Luego de cada éxito, aumenta en 1 la cantidad de LEDs que se prenden para adivinar en la siguiente ronda. Tras esto se le vuelve a pasar la placa al asistente para que configure la siguiente secuencia.
     - b) Si la respuesta es incorrecta, el jugador pierde y se vuelve a mostrar “3100” en el display (haciendo ‘reset’ del juego).
 
-4) Si el usuario acierta hasta llegar a los 15 LEDs prendidos, puede seguir ganando indefinidamente, pero el contador de éxitos se reiniciará eventualmente (ocurre overflow al ganar 256 veces seguidas) y la cantidad de LEDs se mantendrá en 15 hasta que pierda, momento en el que se hace un ‘reset’ del juego y se vuelve al estado inicial del display “3100”.
+4) Si el usuario acierta hasta llegar a los 15 LEDs prendidos, puede seguir ganando indefinidamente, pero la cantidad de LEDs se mantendrá en 15 hasta que pierda, momento en el que se hace un ‘reset’ del juego y se vuelve al estado inicial del display “3100”.
 
 # Distribución del Trabajo :briefcase:
 
