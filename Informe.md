@@ -134,6 +134,8 @@ Señales de Entrada:
 
 - selA: Señales de control que seleccionan la salida del Multiplexor A (revisar sección Unidad de Control).
 
+- inputIn: Valor de salida del multiplexor IN.
+
 Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
@@ -154,7 +156,7 @@ Señales de Entrada:
 
 Señales de Salida:
 
-- dataOut: Valor de entrada a la ALU (16 bits).
+- dataOut: Valor de entrada a la ALU (16 bits). También se conecta a la entrada del Decoder Out.
 
 Arquitectura: El multiplexor B se compone de señales de control, según las que se definen los valores a entregar en la salida (utilizando with select). Según la combinación que entregue selB puede retornar en dataOut los valores B, "0000000000000000", un dato proveniente de la RAM y un Literal proveniente de la ROM.
 
@@ -208,6 +210,28 @@ Señales de Salida:
 
 Arquitectura: El multiplexor Address se compone de señales de control, según las que se definen los valores a entregar en la salida (utilizando with select). Según la combinación que entregue selAdd puede retornar en ramAdd los valores romOut (12 bits menos significativos del literal), valB (12 bits menos significativos) y spOut.
 
+### Multiplexor IN:
+
+Señales de Entrada:
+
+- romOut: Valor del literal de la instrucción actual (actúa como señal de control del multiplexor).
+
+- sw: Valor del input de los switches.
+
+- buttons: Valor del input de los botones.
+
+- timerSec: Valor del input del timer (segundos).
+
+- timerMSec: Valor del input del timer (milisegundos).
+
+- timerUSec: Valor del input del timer (microsegundos).
+
+Señales de Salida:
+
+- inputVal: Valor del input seleccionado.
+
+Arquitectura: El multiplexor IN se compone de señales de control, según las que se definen los valores a entregar en la salida (utilizando with select). Según la combinación que entregue romOut (literal de la ROM) puede retornar en inputVal los valores sw, buttons, timerSec, timerMSec y timerUSec.
+
 ### Registro A: 
 
 Señales de Entrada:
@@ -224,7 +248,7 @@ Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
 
-- valA: Valor de salida del Registro A, conectado directamente al Display.
+- valA: Valor de salida del Registro A, conectado a las entradas de los registros Display y Led.
 
 Arquitectura: El módulo Registro A está compuesto por el Registro A y Multiplexor A, razón por la que recibe las señales de entrada de ambos componentes. Se encarga de almacenar valores en el Registro A (según la señal loadA y sólo en Flanco de Subida del Clock) y de entregar en la salida lo que se le indique con la señal selA.
 
@@ -248,7 +272,7 @@ Señales de Salida:
 
 - dataOut: Valor de entrada a la ALU (16 bits).
 
-- valB: Valor de salida del Registro B, conectado directamente al Display. También se conecta al Multiplexor Address para realizar direccionamiento indirecto.
+- valB: Valor de salida del Registro B. Se conecta al Multiplexor Address para realizar direccionamiento indirecto.
 
 Arquitectura: El módulo Registro B está compuesto por el Registro B y Multiplexor B, razón por la que recibe las señales de entrada de ambos componentes. Se encarga de almacenar valores en el Registro B (según la señal loadB y sólo en Flanco de Subida del Clock) y de entregar en la salida lo que se le indique con la señal selB.
 
@@ -282,6 +306,38 @@ Señales de Salida:
 
 Arquitectura: Se creó la señal "regVal". Si el Clock está en flanco de subida, se actualiza esta señal con el valor de entrada "status". El valor de salida es el de la señal regVal, que se conecta con la Unidad de Control para permitir el uso de Saltos Condicionales.
 
+### Registro Display: 
+
+Señales de Entrada:
+
+- clock: Señal del Clock de la placa.
+
+- loadDis: Señal de control que habilita la carga de datos en el Registro Display. Si toma valor 1 permite la carga.
+
+- dataIn: Valor de salida del Registro A.
+
+Señales de Salida:
+
+- dataOut: Valor de entrada al controlador del Display.
+
+Arquitectura: Se utilizó la misma estructura de los registros A y B (sin incluir un multiplexor en el mismo componente).
+
+### Registro Led: 
+
+Señales de Entrada:
+
+- clock: Señal del Clock de la placa.
+
+- loadLed: Señal de control que habilita la carga de datos en el Registro Led. Si toma valor 1 permite la carga.
+
+- dataIn: Valor de salida del Registro A.
+
+Señales de Salida:
+
+- dataOut: Valor de entrada a los Leds de la placa.
+
+Arquitectura: Se utilizó la misma estructura de los registros A y B (sin incluir un multiplexor en el mismo componente).
+
 ### Stack Pointer (SP):
 
 Señales de Entrada:
@@ -298,6 +354,22 @@ Señales de Salida:
 
 Arquitectura: Se utilizó un Stack Pointer de 12 bits de direccionamiento de la RAM, el que comienza con el valor inicial '111111111111' (última dirección de la memoria RAM), y sólo permite incrementar o decrementar su valor de a 1, dependiendo de los valores de las señales de control incSP y decSP. Su salida se conecta al Multiplexor Address, donde se utiliza al momento de ejecutar llamadas y retornos de subrutinas.
 
+### Decoder OUT:
+
+Señales de Entrada:
+
+- portIn: Valor de salida del multiplexor B.
+
+- loadOut: Señal de control que habilita la carga de datos en alguno de los registros de Output. Si toma valor 1 permite la carga.
+
+Señales de Salida:
+
+- disOut: Señal de carga del Registro Display.
+
+- ledOut: Señal de carga del Registro Led.
+
+Arquitectura: El Decoder OUT se compone de 2 multiplexores, los que actúan como 'enabler doble' para direccionar la señal de carga de Output (loadOut) hacia alguno de los registros de Output (Display o Led).
+
 ### Componentes Entregados
 
 Se utilizaron los siguientes componentes entregados en el repositorio para facilitar el desarrollo de la entrega:
@@ -313,6 +385,8 @@ Se utilizaron los siguientes componentes entregados en el repositorio para facil
 - Clock_Divider: Permite disminuir la frecuencia del Clock de la placa. Es utilizado en conjunto con el Botón Derecho (btnFast) para modificar la velocidad del Clock en tiempo real.
 
 - Debouncer: Es utilizado para estabilizar las señales de entrada de los Botones.
+
+- Timer: Controlador que permite contar el tiempo transcurrido tanto en segundos, como en milisegundos y microsegundos.
 
 # Estructura de las Instrucciones :building_construction:
 
@@ -522,29 +596,29 @@ El juego permite desafiar la memoria visual. La placa debe mostrar una secuencia
 
 # Distribución del Trabajo :briefcase:
 
-Lo más difícil fue 
+Lo más difícil fue realizar el testing del hardware de la placa sin utilizar el Clock Manual de las entregas pasadas (se tuvo que descontinuar para poder añadir la capacidad de I/O al computador).
 
 A continuación se encuentra el trabajo realizado por cada integrante del grupo:
 
 ## Benjamín F. Farías:
 
-
+Actualizar el hardware y la Unidad de Control para permitir la interacción con dispositivos I/O. También realizar el testing de la placa y apoyar en el testing de los juegos y assembler.
 
 ## Karl M. Haller:
 
-
+Desarrollar el programa en assembly del juego `MemoLED` (inventado por nosotros).
 
 ## Diego Navarro:
 
-
+Diseñar las reglas y el flujo de juego de `MemoLED`.
 
 ## Juan I. Parot:
 
-
+Desarrollar el programa en assembly del juego `Adivina La Palabra`.
 
 ## Juan A. Romero:
 
-
+Actualizar el assembler para soportar las instrucciones de I/O.
 
 # Instrucciones Soportadas :white_check_mark:
 
